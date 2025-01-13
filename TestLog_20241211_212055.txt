@@ -1,0 +1,244 @@
+2024-12-11 21:20:55 - Starting the round...
+2024-12-11 21:20:55 -          Player  Initiative   Status
+0     RedPlayer           3  waiting
+1    BluePlayer           7  waiting
+2   GreenPlayer           1  waiting
+3  YellowPlayer           5  waiting
+4  PurplePlayer           2  waiting
+5  OrangePlayer           8  waiting
+2024-12-11 21:20:55 - Starting the round...
+2024-12-11 21:20:55 -          Player  Initiative   Status
+2   GreenPlayer           1  waiting
+4  PurplePlayer           2  waiting
+0     RedPlayer           3  waiting
+3  YellowPlayer           5  waiting
+1    BluePlayer           7  waiting
+5  OrangePlayer           8  waiting
+2024-12-11 21:20:55 - Iteration: 1
+2024-12-11 21:20:55 - Calling player: GreenPlayer
+2024-12-11 21:20:56 - Response: red
+2024-12-11 21:20:56 - Calling player: PurplePlayer
+2024-12-11 21:21:00 - Response: red
+2024-12-11 21:21:00 - Calling player: RedPlayer
+2024-12-11 21:21:00 - RedPlayer is the active player
+2024-12-11 21:21:05 - Received message: pressed red on topic RedPlayer
+2024-12-11 21:21:06 - Response: pressed red
+2024-12-11 21:21:06 - Calling player: YellowPlayer
+2024-12-11 21:21:07 - Response: red
+2024-12-11 21:21:07 - Calling player: BluePlayer
+2024-12-11 21:21:12 - Response: green
+2024-12-11 21:21:12 - Calling player: OrangePlayer
+2024-12-11 21:21:17 - Response: red
+2024-12-11 21:21:17 -          Player  Initiative       Status
+2   GreenPlayer           1          red
+4  PurplePlayer           2          red
+0     RedPlayer           3  pressed red
+3  YellowPlayer           5          red
+1    BluePlayer           7      waiting
+5  OrangePlayer           8          red
+2024-12-11 21:21:17 - 
+2024-12-11 21:21:17 - Iteration: 2
+2024-12-11 21:21:17 - Calling player: RedPlayer
+2024-12-11 21:21:17 - RedPlayer is the active player
+2024-12-11 21:21:22 - Received message: pressed red on topic RedPlayer
+2024-12-11 21:21:23 - Response: pressed red
+2024-12-11 21:21:23 - Calling player: BluePlayer
+2024-12-11 21:21:26 - Response: red
+2024-12-11 21:21:26 -          Player  Initiative       Status
+2   GreenPlayer           1          red
+4  PurplePlayer           2          red
+0     RedPlayer           3  pressed red
+3  YellowPlayer           5          red
+1    BluePlayer           7          red
+5  OrangePlayer           8          red
+2024-12-11 21:21:26 - 
+2024-12-11 21:21:26 - Iteration: 3
+2024-12-11 21:21:26 - Calling player: RedPlayer
+2024-12-11 21:21:26 - RedPlayer is the active player
+2024-12-11 21:21:36 - Received message: pressed red on topic RedPlayer
+2024-12-11 21:21:37 - Response: pressed red
+2024-12-11 21:21:37 -          Player  Initiative       Status
+2   GreenPlayer           1          red
+4  PurplePlayer           2          red
+0     RedPlayer           3  pressed red
+3  YellowPlayer           5          red
+1    BluePlayer           7          red
+5  OrangePlayer           8          red
+2024-12-11 21:21:37 - 
+2024-12-11 21:21:37 - Iteration: 4
+2024-12-11 21:21:37 - Calling player: RedPlayer
+2024-12-11 21:21:37 - RedPlayer is the active player
+2024-12-11 21:21:58 - Response: None
+2024-12-11 21:21:58 -          Player  Initiative Status
+2   GreenPlayer           1    red
+4  PurplePlayer           2    red
+0     RedPlayer           3   None
+3  YellowPlayer           5    red
+1    BluePlayer           7    red
+5  OrangePlayer           8    red
+2024-12-11 21:21:58 - 
+2024-12-11 21:21:58 - Iteration: 5
+2024-12-11 21:21:58 - Calling player: RedPlayer
+2024-12-11 21:21:58 - RedPlayer is the active player
+2024-12-11 21:22:19 - Response: None
+2024-12-11 21:22:19 -          Player  ...  Status
+2   GreenPlayer  ...     red
+4  PurplePlayer  ...     red
+0     RedPlayer  ...    None
+3  YellowPlayer  ...     red
+1    BluePlayer  ...     red
+5  OrangePlayer  ...     red
+
+[6 rows x 3 columns]
+2024-12-11 21:22:19 - 
+2024-12-11 21:22:19 - Iteration: 6
+2024-12-11 21:22:19 - Calling player: RedPlayer
+2024-12-11 21:22:19 - RedPlayer is the active player
+2024-12-11 21:22:40 - Response: None
+2024-12-11 21:22:40 -          Player  ...  Status
+2   GreenPlayer  ...     red
+4  PurplePlayer  ...     red
+0     RedPlayer  ...    None
+3  YellowPlayer  ...     red
+1    BluePlayer  ...     red
+5  OrangePlayer  ...     red
+
+[6 rows x 3 columns]
+2024-12-11 21:22:40 - 
+2024-12-11 21:22:40 - Iteration: 7
+2024-12-11 21:22:40 - Calling player: RedPlayer
+2024-12-11 21:22:40 - RedPlayer is the active player
+2024-12-11 21:23:01 - Response: None
+2024-12-11 21:23:01 -          Player  ...  Status
+2   GreenPlayer  ...     red
+4  PurplePlayer  ...     red
+0     RedPlayer  ...    None
+3  YellowPlayer  ...     red
+1    BluePlayer  ...     red
+5  OrangePlayer  ...     red
+
+[6 rows x 3 columns]
+2024-12-11 21:23:01 - 
+2024-12-11 21:23:01 - Iteration: 8
+2024-12-11 21:23:01 - Calling player: RedPlayer
+2024-12-11 21:23:01 - RedPlayer is the active player
+2024-12-11 21:23:22 - Response: None
+2024-12-11 21:23:23 -          Player  Initiative Status
+2   GreenPlayer           1    red
+4  PurplePlayer           2    red
+0     RedPlayer           3   None
+3  YellowPlayer           5    red
+1    BluePlayer           7    red
+5  OrangePlayer           8    red
+2024-12-11 21:23:23 - 
+2024-12-11 21:23:23 - Iteration: 9
+2024-12-11 21:23:23 - Calling player: RedPlayer
+2024-12-11 21:23:23 - RedPlayer is the active player
+2024-12-11 21:23:44 - Response: None
+2024-12-11 21:23:44 -          Player  Initiative Status
+2   GreenPlayer           1    red
+4  PurplePlayer           2    red
+0     RedPlayer           3   None
+3  YellowPlayer           5    red
+1    BluePlayer           7    red
+5  OrangePlayer           8    red
+2024-12-11 21:23:44 - 
+2024-12-11 21:23:44 - Iteration: 10
+2024-12-11 21:23:44 - Calling player: RedPlayer
+2024-12-11 21:23:44 - RedPlayer is the active player
+2024-12-11 21:24:05 - Response: None
+2024-12-11 21:24:05 -          Player  Initiative Status
+2   GreenPlayer           1    red
+4  PurplePlayer           2    red
+0     RedPlayer           3   None
+3  YellowPlayer           5    red
+1    BluePlayer           7    red
+5  OrangePlayer           8    red
+2024-12-11 21:24:05 - 
+2024-12-11 21:24:05 - Iteration: 11
+2024-12-11 21:24:05 - Calling player: RedPlayer
+2024-12-11 21:24:05 - RedPlayer is the active player
+2024-12-11 21:24:26 - Response: None
+2024-12-11 21:24:26 -          Player  Initiative Status
+2   GreenPlayer           1    red
+4  PurplePlayer           2    red
+0     RedPlayer           3   None
+3  YellowPlayer           5    red
+1    BluePlayer           7    red
+5  OrangePlayer           8    red
+2024-12-11 21:24:26 - 
+2024-12-11 21:24:26 - Iteration: 12
+2024-12-11 21:24:26 - Calling player: RedPlayer
+2024-12-11 21:24:26 - RedPlayer is the active player
+2024-12-11 21:24:46 - Response: None
+2024-12-11 21:24:46 -          Player  Initiative Status
+2   GreenPlayer           1    red
+4  PurplePlayer           2    red
+0     RedPlayer           3   None
+3  YellowPlayer           5    red
+1    BluePlayer           7    red
+5  OrangePlayer           8    red
+2024-12-11 21:24:46 - 
+2024-12-11 21:24:46 - Iteration: 13
+2024-12-11 21:24:46 - Calling player: RedPlayer
+2024-12-11 21:24:46 - RedPlayer is the active player
+2024-12-11 21:25:07 - Response: None
+2024-12-11 21:25:07 -          Player  Initiative Status
+2   GreenPlayer           1    red
+4  PurplePlayer           2    red
+0     RedPlayer           3   None
+3  YellowPlayer           5    red
+1    BluePlayer           7    red
+5  OrangePlayer           8    red
+2024-12-11 21:25:07 - 
+2024-12-11 21:25:07 - Iteration: 14
+2024-12-11 21:25:07 - Calling player: RedPlayer
+2024-12-11 21:25:07 - RedPlayer is the active player
+2024-12-11 21:25:28 - Response: None
+2024-12-11 21:25:28 -          Player  Initiative Status
+2   GreenPlayer           1    red
+4  PurplePlayer           2    red
+0     RedPlayer           3   None
+3  YellowPlayer           5    red
+1    BluePlayer           7    red
+5  OrangePlayer           8    red
+2024-12-11 21:25:28 - 
+2024-12-11 21:25:28 - Iteration: 15
+2024-12-11 21:25:28 - Calling player: RedPlayer
+2024-12-11 21:25:28 - RedPlayer is the active player
+2024-12-11 21:25:49 - Response: None
+2024-12-11 21:25:49 -          Player  Initiative Status
+2   GreenPlayer           1    red
+4  PurplePlayer           2    red
+0     RedPlayer           3   None
+3  YellowPlayer           5    red
+1    BluePlayer           7    red
+5  OrangePlayer           8    red
+2024-12-11 21:25:49 - 
+2024-12-11 21:25:49 - Iteration: 16
+2024-12-11 21:25:49 - Calling player: RedPlayer
+2024-12-11 21:25:49 - RedPlayer is the active player
+2024-12-11 21:26:10 - Response: None
+2024-12-11 21:26:10 -          Player  Initiative Status
+2   GreenPlayer           1    red
+4  PurplePlayer           2    red
+0     RedPlayer           3   None
+3  YellowPlayer           5    red
+1    BluePlayer           7    red
+5  OrangePlayer           8    red
+2024-12-11 21:26:10 - 
+2024-12-11 21:26:10 - Iteration: 17
+2024-12-11 21:26:10 - Calling player: RedPlayer
+2024-12-11 21:26:10 - RedPlayer is the active player
+2024-12-11 21:26:31 - Response: None
+2024-12-11 21:26:31 -          Player  Initiative Status
+2   GreenPlayer           1    red
+4  PurplePlayer           2    red
+0     RedPlayer           3   None
+3  YellowPlayer           5    red
+1    BluePlayer           7    red
+5  OrangePlayer           8    red
+2024-12-11 21:26:31 - 
+2024-12-11 21:26:31 - Iteration: 18
+2024-12-11 21:26:31 - Calling player: RedPlayer
+2024-12-11 21:26:31 - RedPlayer is the active player

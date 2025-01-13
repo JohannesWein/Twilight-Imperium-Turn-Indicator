@@ -1,0 +1,27 @@
+2024-12-11 21:26:46 - Starting the round...
+2024-12-11 21:26:46 -          Player  ...   Status
+0     RedPlayer  ...  waiting
+1    BluePlayer  ...  waiting
+2   GreenPlayer  ...  waiting
+3  YellowPlayer  ...  waiting
+4  PurplePlayer  ...  waiting
+5  OrangePlayer  ...  waiting
+
+[6 rows x 3 columns]
+2024-12-11 21:26:46 - Starting the round...
+2024-12-11 21:26:46 -          Player  ...   Status
+2   GreenPlayer  ...  waiting
+4  PurplePlayer  ...  waiting
+0     RedPlayer  ...  waiting
+3  YellowPlayer  ...  waiting
+1    BluePlayer  ...  waiting
+5  OrangePlayer  ...  waiting
+
+[6 rows x 3 columns]
+2024-12-11 21:26:46 - Iteration: 1
+2024-12-11 21:26:46 - Calling player: GreenPlayer
+2024-12-11 21:26:48 - Response: green
+2024-12-11 21:26:48 - Calling player: PurplePlayer
+2024-12-11 21:26:51 - Response: green
+2024-12-11 21:26:51 - Calling player: RedPlayer
+2024-12-11 21:26:51 - RedPlayer is the active player
