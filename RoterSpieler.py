@@ -64,7 +64,7 @@ def handle_switch(switch, prev_state, led, color):
         if current_state == 0:
             try:
                 client = mqttConnect()
-                client.publish(mqttTopic, f"pressed {color}".encode())
+                client.publish(mqttTopic, f"{color}".encode())
                 print(f"{color} Nachricht an Topic {mqttTopic} gesendet")
                 client.disconnect()
                 led.off()  # Turn off the external LED
