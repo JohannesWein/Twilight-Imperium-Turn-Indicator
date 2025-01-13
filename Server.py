@@ -40,7 +40,7 @@ log_message("Starting the server...")
 log_message(str(df))
 # 12shg
 # Function to call player and get response
-def call_player(Player):
+def call_player(Player, topic):
     received_message = None
 
     # Callback function to handle messages
@@ -61,11 +61,11 @@ def call_player(Player):
     # Connect to the broker
     client.connect(mqttBroker)
 
-    # Subscribe to the topic with the same name as the Player
-    client.subscribe(Player)
+    # Subscribe to the specified topic
+    client.subscribe(topic)
 
-    # Publish a message to the topic "WerIstDran"
-    client.publish("WerIstDran", Player)
+    # Publish a message to the topic
+    client.publish(topic, Player)
 
     # Start the loop to process received messages
     client.loop_start()
@@ -85,7 +85,7 @@ def GetInitiative(df):
     initiatives = {}
 
     for player in df["Player"]:
-        initiative = call_player(player)
+        initiative = call_player(player, "WasIstDeineID")
         if initiative is not None:
             initiatives[player] = int(initiative)
             log_message(f"Received initiative: {initiative} from player: {player}")
@@ -119,7 +119,7 @@ def ActionPhase(df):
                 log_message(f"Calling player: {player}")
                 if player == "RedPlayer":
                     log_message("RedPlayer is the active player")
-                    response = call_player(player)
+                    response = call_player(player, "WerIstDran")
                 else:
                     time.sleep(random.randint(1, 5))
                     response = random.choice(["red", "green"])
