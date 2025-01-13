@@ -14,7 +14,7 @@ mqttPW = '271344'
 players = ["RedPlayer", "BluePlayer", "GreenPlayer", "YellowPlayer", "PurplePlayer", "OrangePlayer"]
 
 # Generate random integers for the Initiative column
-initiative = [3, 7, 1, 5, 2, 8]
+initiatives = [3, 7, 1, 5, 2, 8]
 
 # Set the Status column to "waiting"
 status = ["waiting"] * 6
@@ -22,7 +22,7 @@ status = ["waiting"] * 6
 # Create a DataFrame
 data = {
     "Player": players,
-    "Initiative": initiative,
+    "Initiative": initiatives,
     "Status": status
 }
 
@@ -36,7 +36,7 @@ def log_message(message):
     with open(log_filename, 'a') as log_file:
         log_file.write(f"{timestamp} - {message}\n")
 
-log_message("Starting the round...")
+log_message("Starting the server...")
 log_message(str(df))
 # 12shg
 # Function to call player and get response
@@ -81,6 +81,23 @@ def call_player(Player):
 
     return received_message
 
+def GetInitiative(df):
+    initiatives = {}
+
+    for player in df["Player"]:
+        initiative = call_player(player)
+        if initiative is not None:
+            initiatives[player] = int(initiative)
+            log_message(f"Received initiative: {initiative} from player: {player}")
+        else:
+            log_message(f"No response from player: {player}")
+
+    # Update the DataFrame with the received initiatives
+    for player, initiative in initiatives.items():
+        df.loc[df["Player"] == player, "Initiative"] = initiative
+    df = df.sort_values(by="Initiative", ascending=True)
+    return df
+
 # Sort the DataFrame by the Initiative column
 df = df.sort_values(by="Initiative", ascending=True)
 
@@ -120,5 +137,12 @@ def ActionPhase(df):
     log_message("All players have status 'red'")
     log_message(str(df))
 
+
+
+
 # Example usage
 ActionPhase(df)
+
+# Example usage for GetInitiative
+df = GetInitiative(df)
+print(df)
