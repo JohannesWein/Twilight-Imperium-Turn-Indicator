@@ -1,0 +1,9 @@
+2025-01-13 22:35:11 - Starting the server...
+2025-01-13 22:35:11 -          Player  Initiative   Status
+0     RedPlayer           3  waiting
+1    BluePlayer           7  waiting
+2   GreenPlayer           1  waiting
+3  YellowPlayer           5  waiting
+4  PurplePlayer           2  waiting
+5  OrangePlayer           8  waiting
+2025-01-13 22:35:11 - Received message: GreenPlayer on topic WasIstDeineID
