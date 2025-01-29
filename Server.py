@@ -14,7 +14,7 @@ mqttPW = '271344'
 players = ["RedPlayer", "BluePlayer", "GreenPlayer", "YellowPlayer", "PurplePlayer", "OrangePlayer"]
 
 # Generate random integers for the Initiative column
-initiatives = [3, 7, 1, 5, 2, 8]
+initiatives = [10,11, 12, 13, 14, 15]
 
 # Set the Status column to "waiting"
 status = ["waiting"] * 6
@@ -35,6 +35,7 @@ def log_message(message):
     timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     with open(log_filename, 'a') as log_file:
         log_file.write(f"{timestamp} - {message}\n")
+    print(f"{timestamp} - {message}")
 
 log_message("Starting the server...")
 log_message(str(df))
@@ -85,9 +86,25 @@ def GetInitiative(df):
     initiatives = {}
 
     for player in df["Player"]:
-        initiative = call_player(player, "WasIstDeineID")
-        if initiative is not None:
-            initiatives[player] = int(initiative)
+        initiative_raw = call_player(player, "WasIstDeineID")
+        if initiative_raw is not None:
+            valid_initiatives = {
+                "#2152995219": 0,
+                "#2155507331": 1,
+                "#2154307683": 2,
+                "#2153591091": 3,
+                "#2154184035": 4,
+                "#2154184035": 5,
+                "#2154184035": 6,
+                "#2154184035": 7,
+                "#2152462819": 8
+            }
+            if initiative_raw in valid_initiatives:
+                initiative = valid_initiatives[initiative_raw]
+            else:
+                log_message(f"Used wrong card: {initiative_raw} from player: {player}")
+                continue
+            initiatives[player] = int(initiative_raw)
             log_message(f"Received initiative: {initiative} from player: {player}")
         else:
             log_message(f"No response from player: {player}")
