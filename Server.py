@@ -89,15 +89,15 @@ def GetInitiative(df):
         initiative_raw = call_player(player, "WasIstDeineID")
         if initiative_raw is not None:
             valid_initiatives = {
-                "#2152995219": 0,
-                "#2155507331": 1,
-                "#2154307683": 2,
-                "#2153591091": 3,
-                "#2154184035": 4,
-                "#2154184035": 5,
-                "#2154184035": 6,
-                "#2154184035": 7,
-                "#2152462819": 8
+                "2152995219": 0,
+                "2155507331": 1,
+                "2154307683": 2,
+                "2153591091": 3,
+                "2154184035": 4,
+                "2154184035": 5,
+                "2154184035": 6,
+                "2154184035": 7,
+                "2152462819": 8
             }
             if initiative_raw in valid_initiatives:
                 initiative = valid_initiatives[initiative_raw]
