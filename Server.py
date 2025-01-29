@@ -6,7 +6,7 @@ import paho.mqtt.client as mqtt
 
 # MQTT-Konfiguration
 mqttBroker = '192.168.178.141'
-mqttClient = 'server'
+mqttClient = 'pico_publisher'
 mqttUser = 'uuuren'
 mqttPW = '271344'
 
@@ -14,7 +14,7 @@ mqttPW = '271344'
 players = ["RedPlayer", "BluePlayer", "GreenPlayer", "YellowPlayer", "PurplePlayer", "OrangePlayer"]
 
 # Generate random integers for the Initiative column
-initiatives = [10,11, 12, 13, 14, 15]
+initiatives = [3, 7, 1, 5, 2, 8]
 
 # Set the Status column to "waiting"
 status = ["waiting"] * 6
@@ -22,7 +22,7 @@ status = ["waiting"] * 6
 # Create a DataFrame
 data = {
     "Player": players,
-    "Initiative": initiatives,
+    "Initiative": [0] * 6,  # Initialize with zeros
     "Status": status
 }
 
@@ -39,7 +39,7 @@ def log_message(message):
 
 log_message("Starting the server...")
 log_message(str(df))
-# 12shg
+
 # Function to call player and get response
 def call_player(Player, topic):
     received_message = None
@@ -115,12 +115,7 @@ def GetInitiative(df):
     df = df.sort_values(by="Initiative", ascending=True)
     return df
 
-# Sort the DataFrame by the Initiative column
-df = df.sort_values(by="Initiative", ascending=True)
-
-# Print the DataFrame
-#print(df)
-
+# Function to handle the action phase
 def ActionPhase(df):
     log_message("Starting the round...")
     log_message(str(df))
@@ -158,7 +153,7 @@ def ActionPhase(df):
 
 
 # Example usage
-ActionPhase(df)
+#ActionPhase(df)
 
 # Example usage for GetInitiative
 df = GetInitiative(df)
