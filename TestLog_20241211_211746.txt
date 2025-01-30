@@ -1,8 +1,0 @@
-2024-12-11 21:17:46 - Starting the game...
-2024-12-11 21:17:46 -          Player  Initiative   Status
-0     RedPlayer           0  waiting
-1    BluePlayer           0  waiting
-2   GreenPlayer           0  waiting
-3  YellowPlayer           0  waiting
-4  PurplePlayer           0  waiting
-5  OrangePlayer           0  waiting
