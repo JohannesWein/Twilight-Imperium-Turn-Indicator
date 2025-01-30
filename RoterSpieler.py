@@ -142,7 +142,7 @@ def on_message(topic, msg):
         client.publish(b"WerIstDran", b"RedPlayerWaiting")
         evaluate_switch()
     if topic == b"WasIstDeineID" and msg == b"RedPlayer":
-        client.publish(b"WasIstDeineID", b"RedPlayerWaiting")
+        #client.publish(b"WasIstDeineID", b"RedPlayerWaiting")
         read_first_uid()    
     if topic == b"SeatingOrder" and msg == b"RedPlayer":
         #client.publish(b"WasIstDeineID", b"RedPlayerWaiting")
