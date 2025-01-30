@@ -63,52 +63,56 @@ def call_player(Player, topic):
     client.connect(mqttBroker)
 
     # Subscribe to the specified topic
-    client.subscribe(topic)
+    client.subscribe(Player)
 
     # Publish a message to the topic
     client.publish(topic, Player)
 
     # Start the loop to process received messages
     client.loop_start()
-
-    # Wait for a response (you can adjust the sleep time as needed)
+    # Wait for a response that does not contain the word "waiting" (you can adjust the sleep time as needed)
     timeout = time.time() + 20  # 20 seconds from now
-    while received_message is None and time.time() < timeout:
+    while (received_message is None or "waiting" in received_message.lower()) and time.time() < timeout:
         time.sleep(0.1)
 
     # Stop the loop and disconnect from the broker
     client.loop_stop()
     client.disconnect()
-
+#Ichglaube er wartet auf Nachrichten zum falschen Topic
     return received_message
 
 def GetInitiative(df):
     initiatives = {}
 
     for player in df["Player"]:
-        initiative_raw = call_player(player, "WasIstDeineID")
-        if initiative_raw is not None:
-            valid_initiatives = {
-                "2152995219": 0,
-                "2155507331": 1,
-                "2154307683": 2,
-                "2153591091": 3,
-                "2154184035": 4,
-                "2154184035": 5,
-                "2154184035": 6,
-                "2154184035": 7,
-                "2152462819": 8
-            }
-            if initiative_raw in valid_initiatives:
-                initiative = valid_initiatives[initiative_raw]
+        log_message(f"Getting initiative from player: {player}")
+        if player=="RedPlayer":
+            initiative_raw = call_player(player, "WasIstDeineID")
+            if initiative_raw is not None:
+                valid_initiatives = {
+                    "2152995219": 0,
+                    "2155507331": 1,
+                    "2154307683": 2,
+                    "2153591091": 3,
+                    "2154184035": 4,
+                    "2154184035": 5,
+                    "2154184035": 6,
+                    "2154184035": 7,
+                    "2152462819": 8
+                }
+                if initiative_raw in valid_initiatives:
+                    initiative = valid_initiatives[initiative_raw]
+                else:
+                    log_message(f"Used wrong card: {initiative_raw} from player: {player}")
+                    continue
+                initiatives[player] = int(initiative)
+                log_message(f"Received initiative: {initiative} from player: {player}")
             else:
-                log_message(f"Used wrong card: {initiative_raw} from player: {player}")
-                continue
-            initiatives[player] = int(initiative_raw)
-            log_message(f"Received initiative: {initiative} from player: {player}")
+                log_message(f"No response from player: {player}")
         else:
-            log_message(f"No response from player: {player}")
-
+            initiative = random.choice([11,12,13,14,15,16,17,18])
+            initiatives[player] = initiative
+            log_message(f"Received fake initiative: {initiative} from player: {player}")
     # Update the DataFrame with the received initiatives
     for player, initiative in initiatives.items():
         df.loc[df["Player"] == player, "Initiative"] = initiative
@@ -133,8 +137,8 @@ def ActionPhase(df):
                     log_message("RedPlayer is the active player")
                     response = call_player(player, "WerIstDran")
                 else:
-                    time.sleep(random.randint(1, 5))
-                    response = random.choice(["red", "green"])
+                    time.sleep(random.randint(1, 2))
+                    response = random.choice(["red", "green","red"])
                 log_message(f"Response: {response}")
 
                 # Update the Status column with the response
@@ -152,9 +156,11 @@ def ActionPhase(df):
 
 
 
-# Example usage
-#ActionPhase(df)
+# Example use
+# 
 
 # Example usage for GetInitiative
 df = GetInitiative(df)
 print(df)
+ActionPhase(df)
+
