@@ -4,14 +4,15 @@ import time
 from umqtt.simple import MQTTClient # type: ignore
 from mfrc522 import MFRC522
 import utime
+import _thread
 
 
 # WLAN-Konfiguration
-wlanSSID = 'LordVoldemodem'
-wlanPW = '7Zwergesindlieb'
+wlanSSID = 'TwilightTurnIndicator'
+wlanPW = 'FabianIstDoof'
 
 # MQTT-Konfiguration
-mqttBroker = '192.168.178.141'
+mqttBroker = '192.168.1.1'
 mqttClient = 'RedPlayer'
 mqttUser = 'uuuren'
 mqttPW = '271344'
@@ -74,6 +75,21 @@ def handle_switch(switch, prev_state, led, color):
         return current_state, False
     return prev_state, False
 
+def blink_led(led,frequency=1):
+    time1 = 1/frequency/2
+    while True:
+        led.on()
+        time.sleep(time1)
+        led.off()
+        time.sleep(time1)
+
+# LED initialisieren
+led_external1 = machine.Pin(12, machine.Pin.OUT) # grün
+led_external2 = machine.Pin(19, machine.Pin.OUT) # rot
+led_external3 = machine.Pin(13, machine.Pin.OUT) # blau, status
+led_external4 = machine.Pin(18, machine.Pin.OUT) # blau, tag gefragt
+
+
 def evaluate_switch():
     # Schalter initialisieren
     switch1 = machine.Pin(15, machine.Pin.IN, machine.Pin.PULL_UP) # grün
@@ -81,14 +97,12 @@ def evaluate_switch():
 
     print('Roter Spieler bereit!')
     
-    # LED initialisieren
-    led_external1 = machine.Pin(12, machine.Pin.OUT) # grün
-    led_external2 = machine.Pin(19, machine.Pin.OUT) # rot
-
+    #TODO: LEDs andersrum anschließen
     led_external1.on()
     led_external2.on()
     print("Beide LEDs initialisiert und eingeschaltet")
 
+ 
     # Funktion zur Schalter-Auswertung
     prev_state1 = switch1.value()
     prev_state2 = switch2.value()
@@ -108,6 +122,7 @@ def evaluate_switch():
     finally:
         led_external1.off()
         led_external2.off()
+#       led_external3.off()
         print("Programm beendet, LEDs ausgeschaltet")
 
 
@@ -119,6 +134,7 @@ def read_first_uid():
 
     while True:
         reader.init()
+        #led_external4.on()
         (stat, tag_type) = reader.request(reader.REQIDL)
         if stat == reader.OK:
             (stat, uid) = reader.SelectTagSN()
@@ -130,6 +146,8 @@ def read_first_uid():
                     client.publish(mqttTopic, f"{card}".encode())
                     print(f"{card} Nachricht an Topic {mqttTopic} gesendet")
                     client.disconnect()
+                    #led_external4.off()
+
                 except OSError as e:
                     print('Fehler: Keine MQTT-Verbindung', e)
                 return card
@@ -163,6 +181,9 @@ print("Warte auf Nachrichten...")
 
 # Endlosschleife, um auf Nachrichten zu warten und Schalter auszuwerten
 try:
+    # Start blinking led_external3 in a separate thread
+    _thread.start_new_thread(blink_led, (led_external3,5))
+
     while True:
         try:
             client.wait_msg()
