@@ -8,11 +8,11 @@ import _thread
 
 
 # WLAN-Konfiguration
-wlanSSID = 'TwilightTurnIndicator'
-wlanPW = 'FabianIstDoof'
+wlanSSID = 'LordVoldemodem'
+wlanPW = '7Zwergesindlieb'
 
 # MQTT-Konfiguration
-mqttBroker = '192.168.1.1'
+mqttBroker = '192.168.178.141'
 mqttClient = 'RedPlayer'
 mqttUser = 'uuuren'
 mqttPW = '271344'
@@ -56,6 +56,7 @@ def mqttConnect():
         print('MQTT-Verbindung hergestellt')
     except Exception as e:
         print('Fehler bei der MQTT-Verbindung:', e)
+        return None
     return client
 
 def handle_switch(switch, prev_state, led, color):
@@ -65,9 +66,10 @@ def handle_switch(switch, prev_state, led, color):
         if current_state == 0:
             try:
                 client = mqttConnect()
-                client.publish(mqttTopic, f"{color}".encode())
-                print(f"{color} Nachricht an Topic {mqttTopic} gesendet")
-                client.disconnect()
+                if client:
+                    client.publish(mqttTopic, f"{color}".encode())
+                    print(f"{color} Nachricht an Topic {mqttTopic} gesendet")
+                    client.disconnect()
                 led.off()  # Turn off the external LED
                 return current_state, True  # Exit the function after the first press
             except OSError as e:
@@ -75,8 +77,8 @@ def handle_switch(switch, prev_state, led, color):
         return current_state, False
     return prev_state, False
 
-def blink_led(led,frequency=1):
-    time1 = 1/frequency/2
+def blink_led(led, frequency=1):
+    time1 = 1 / frequency / 2
     while True:
         led.on()
         time.sleep(time1)
@@ -134,7 +136,9 @@ def read_first_uid():
 
     while True:
         reader.init()
-        #led_external4.on()
+        led_external3.on() 
+        led_external1.on()
+        led_external2.on()
         (stat, tag_type) = reader.request(reader.REQIDL)
         if stat == reader.OK:
             (stat, uid) = reader.SelectTagSN()
@@ -143,10 +147,13 @@ def read_first_uid():
                 print("CARD ID: " + str(card))
                 try:
                     client = mqttConnect()
-                    client.publish(mqttTopic, f"{card}".encode())
-                    print(f"{card} Nachricht an Topic {mqttTopic} gesendet")
-                    client.disconnect()
-                    #led_external4.off()
+                    if client:
+                        client.publish(mqttTopic, f"{card}".encode())
+                        print(f"{card} Nachricht an Topic {mqttTopic} gesendet")
+                        client.disconnect()
+                    led_external3.off() 
+                    led_external1.off()
+                    led_external2.off()
 
                 except OSError as e:
                     print('Fehler: Keine MQTT-Verbindung', e)
@@ -157,7 +164,7 @@ def read_first_uid():
 def on_message(topic, msg):
     print("Nachricht empfangen: %s von Topic: %s" % (msg, topic))
     if topic == b"WerIstDran" and msg == b"RedPlayer":
-        client.publish(b"WerIstDran", b"RedPlayerWaiting")
+        #client.publish(b"WerIstDran", b"RedPlayerWaiting")
         evaluate_switch()
     if topic == b"WasIstDeineID" and msg == b"RedPlayer":
         #client.publish(b"WasIstDeineID", b"RedPlayerWaiting")
@@ -173,35 +180,46 @@ print("WLAN-Status:", WlanStatus)
 
 # MQTT-Verbindung herstellen
 client = mqttConnect()
-client.set_callback(on_message)
-client.subscribe(b"WerIstDran")
-client.subscribe(b"WasIstDeineID")
-client.subscribe(b"SeatingOrder")
-print("Warte auf Nachrichten...")
+if client:
+    client.set_callback(on_message)
+    client.subscribe(b"WerIstDran")
+    client.subscribe(b"WasIstDeineID")
+    client.subscribe(b"SeatingOrder")
+    print("Warte auf Nachrichten...")
+else:
+    print("MQTT-Verbindung fehlgeschlagen")
 
 # Endlosschleife, um auf Nachrichten zu warten und Schalter auszuwerten
 try:
     # Start blinking led_external3 in a separate thread
-    _thread.start_new_thread(blink_led, (led_external3,5))
+    #_thread.start_new_thread(blink_led, (led_external3,5))
 
     while True:
         try:
-            client.wait_msg()
-            print("Warte auf nächste Nachricht...")
+            if client:
+                client.wait_msg()
+                print("Warte auf nächste Nachricht...")
+            else:
+                print("MQTT-Client ist None, versuche erneut zu verbinden...")
+                client = mqttConnect()
+                if client:
+                    client.set_callback(on_message)
+                    client.subscribe(b"WerIstDran")
+                    client.subscribe(b"WasIstDeineID")
+                    client.subscribe(b"SeatingOrder")
         except OSError as e:
             print("Fehler beim Warten auf Nachrichten:", e)
             client = mqttConnect()  # Versuche, die Verbindung wiederherzustellen
-            client.set_callback(on_message)
-            client.subscribe(b"WerIstDran")
-            client.subscribe(b"WasistDeineID")
-            client.subscribe(b"SeatingOrder")
+            if client:
+                client.set_callback(on_message)
+                client.subscribe(b"WerIstDran")
+                client.subscribe(b"WasIstDeineID")
+                client.subscribe(b"SeatingOrder")
 except KeyboardInterrupt:
-    pass
+    print("Programm durch Benutzer unterbrochen")
 except Exception as e:
-    print("Fehler in der Hauptschleife:", e)
-
-print("Programm beendet")
-
-# Aufruf der Funktion und Ausgabe der UID
-#uid = read_first_uid()
-#print("Erste gelesene UID: " + str(uid))
+    print("Ein unerwarteter Fehler ist aufgetreten:", e)
+finally:
+    if client:
+        client.disconnect()
+    print("Programm beendet")
