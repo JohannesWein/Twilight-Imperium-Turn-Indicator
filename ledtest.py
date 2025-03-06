@@ -36,13 +36,12 @@ def blink_led(led,frequency=1):
 led_external1 = machine.Pin(12, machine.Pin.OUT) # grün
 led_external2 = machine.Pin(19, machine.Pin.OUT) # rot
 led_external3 = machine.Pin(13, machine.Pin.OUT) # blau, status
-led_external4 = machine.Pin(18, machine.Pin.OUT) # blau, tag gefragt
 
 
-_thread.start_new_thread(blink_led, (led_external3,2))
+led_external2.on()
+time.sleep(1)
+led_external2.off()
 
-
-led_external1.on()
-
-blink_led(led_external2)
-
+#Start blinking led_external3 in a separate thread
+_thread.start_new_thread(blink_led, (led_external3,5))
+blink_led(led_external1, 2)
