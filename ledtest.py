@@ -12,13 +12,13 @@ import _thread
 wlanSSID = 'LordVoldemodem'
 wlanPW = '7Zwergesindlieb'
 
-# MQTT-Konfiguration
-mqttBroker = '192.168.178.141'
-mqttClient = 'RedPlayer'
-mqttUser = 'uuuren'
-mqttPW = '271344'
+# # MQTT-Konfiguration
+# mqttBroker = '192.168.178.141'
+# mqttClient = 'RedPlayer'
+# mqttUser = 'uuuren'
+# mqttPW = '271344'
 
-mqttTopic = b"RedPlayer"
+# mqttTopic = b"RedPlayer"
 
 
 # Status-LED für die WLAN-Verbindung
@@ -37,6 +37,7 @@ led_external1 = machine.Pin(12, machine.Pin.OUT) # grün
 led_external2 = machine.Pin(19, machine.Pin.OUT) # rot
 led_external3 = machine.Pin(13, machine.Pin.OUT) # blau, status
 
+blink_led(led_onboard)
 
 led_external2.on()
 time.sleep(1)

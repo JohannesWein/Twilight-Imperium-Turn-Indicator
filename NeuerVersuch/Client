@@ -1,0 +1,105 @@
+import machine
+import network
+import time
+from umqtt.simple import MQTTClient
+from mfrc522 import MFRC522
+
+# MQTT Configuration
+mqttBroker = "192.168.1.100"  # Replace with your Raspberry Pi's IP address
+mqttPort = 1883
+mqttTopicInitiative = "Initiative"
+mqttTopicTurn = "Turn"
+clientName = "Client1"  # Replace with Client1, Client2, etc.
+
+# Pins for RFID and Buttons
+rfid_reader = MFRC522(sck=6, mosi=7, miso=4, rst=22, cs=5)  # Replace with actual pin configuration
+button_red = machine.Pin(15, machine.Pin.IN, machine.Pin.PULL_UP)
+button_green = machine.Pin(16, machine.Pin.IN, machine.Pin.PULL_UP)
+
+# Valid RFID cards with initiative values
+valid_initiatives = {
+    "2152995219": 0,
+    "2155507331": 1,
+    "2154307683": 2,
+    "2153591091": 3,
+    "2154184035": 4,
+    "2154184035": 5,
+    "2154184035": 6,
+    "2154184035": 7,
+    "2152462819": 8
+}
+
+# Connect to Wi-Fi
+def wlanConnect():
+    wlanSSID = "YourSSID"
+    wlanPW = "YourPassword"
+    wlan = network.WLAN(network.STA_IF)
+    wlan.active(True)
+    wlan.connect(wlanSSID, wlanPW)
+    while not wlan.isconnected():
+        print("Connecting to Wi-Fi...")
+        time.sleep(1)
+    print("Connected to Wi-Fi:", wlan.ifconfig())
+
+# MQTT Callbacks
+def on_message(topic, msg):
+    global clientName
+    if topic == mqttTopicInitiative.encode():
+        if msg.decode().startswith(clientName):
+            print("Initiative request received.")
+            card_id = read_rfid()
+            if card_id in valid_initiatives:
+                initiative = valid_initiatives[card_id]
+                client.publish(mqttTopicInitiative, f"{clientName}:{initiative}")
+            else:
+                print(f"Invalid card ID: {card_id}")
+                client.publish(mqttTopicInitiative, f"{clientName}:Invalid")
+
+    elif topic == mqttTopicTurn.encode():
+        if msg.decode().startswith(clientName):
+            print("Turn request received.")
+            response = evaluate_buttons()
+            client.publish(mqttTopicTurn, f"{clientName}:{response}")
+
+# Read RFID Card
+def read_rfid():
+    print("Waiting for RFID card...")
+    while True:
+        rfid_reader.init()
+        (stat, tag_type) = rfid_reader.request(rfid_reader.REQIDL)
+        if stat == rfid_reader.OK:
+            (stat, uid) = rfid_reader.SelectTagSN()
+            if stat == rfid_reader.OK:
+                card_id = int.from_bytes(bytes(uid), "little")
+                print(f"Card ID: {card_id}")
+                return str(card_id)
+        time.sleep(0.5)
+
+# Evaluate Buttons
+def evaluate_buttons():
+    while True:
+        if button_red.value() == 0:
+            print("Red button pressed.")
+            return "red"
+        elif button_green.value() == 0:
+            print("Green button pressed.")
+            return "green"
+        time.sleep(0.1)
+
+# Connect to MQTT
+def mqttConnect():
+    client = MQTTClient(clientName, mqttBroker, port=mqttPort)
+    client.set_callback(on_message)
+    client.connect()
+    client.subscribe(mqttTopicInitiative)
+    client.subscribe(mqttTopicTurn)
+    return client
+
+# Main Logic
+wlanConnect()
+client = mqttConnect()
+client.loop_start()
+
+print("Client started. Waiting for server requests...")
+while True:
+    time.sleep(1)

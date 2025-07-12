@@ -1,0 +1,80 @@
+import paho.mqtt.client as mqtt
+import time
+import random
+
+# MQTT Configuration
+mqttBroker = "192.168.1.100"  # Replace with your Raspberry Pi's IP address
+mqttPort = 1883
+mqttTopicInitiative = "Initiative"
+mqttTopicTurn = "Turn"
+mqttTopicResponse = "Response"
+
+# Player Configuration
+players = ["Client1", "Client2", "Client3", "Client4", "Client5", "Client6"]
+
+# MQTT Callbacks
+player_status = {}
+player_initiative = {}
+
+def reset_game_state():
+    global player_status, player_initiative
+    player_status = {player: "waiting" for player in players}
+    player_initiative = {}
+
+def on_message(client, userdata, message):
+    global player_initiative, player_status
+    topic = message.topic
+    payload = message.payload.decode()
+
+    if topic == mqttTopicInitiative:
+        player, initiative = payload.split(":")
+        player_initiative[player] = int(initiative)
+        print(f"Received initiative from {player}: {initiative}")
+
+    elif topic == mqttTopicTurn:
+        player, response = payload.split(":")
+        if response == "red":
+            player_status[player] = "passed"
+        elif response == "green":
+            player_status[player] = "waiting"
+        print(f"Received turn response from {player}: {response}")
+
+# MQTT Setup
+client = mqtt.Client("Server")
+client.on_message = on_message
+client.connect(mqttBroker, mqttPort)
+client.subscribe([(mqttTopicInitiative, 0), (mqttTopicTurn, 0)])
+client.loop_start()
+
+# Main Logic
+print("Server started. Waiting for players...")
+
+while True:
+    # Reset game state for a new round
+    reset_game_state()
+
+    # Call for Initiative
+    print("Calling players for initiative...")
+    for player in players:
+        print(f"Calling {player} for initiative...")
+        client.publish(mqttTopicInitiative, f"{player}:Request")
+        time.sleep(2)  # Wait for response
+
+    # Sort players by initiative
+    sorted_players = sorted(player_initiative.items(), key=lambda x: x[1], reverse=True)
+    print("Players sorted by initiative:", sorted_players)
+
+    # Call for Turn
+    print("Starting turn-based gameplay...")
+    while any(status == "waiting" for status in player_status.values()):
+        for player, _ in sorted_players:
+            if player_status[player] == "waiting":
+                print(f"Calling {player} for turn...")
+                client.publish(mqttTopicTurn, f"{player}:Request")
+                time.sleep(2)  # Wait for response
+
+    print("All players have passed. Starting a new round...")
+    time.sleep(5)  # Wait before starting a new round
+
+client.loop_stop()
+client.disconnect()

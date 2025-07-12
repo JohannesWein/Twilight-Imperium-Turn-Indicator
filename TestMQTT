@@ -1,0 +1,78 @@
+import machine
+import network
+import time
+from umqtt.simple import MQTTClient # type: ignore
+from mfrc522 import MFRC522
+import utime
+import _thread
+
+# WLAN-Konfiguration
+wlanSSID = 'Twilight'
+wlanPW = 'Imperium'
+# wlanSSID = 'LordVoldemodem'
+# wlanPW = '7Zwergesindlieb'
+
+
+
+# MQTT-Konfiguration
+mqttBroker = '10.42.0.1'
+mqttClient = 'Rot'
+#mqttUser = 'mqttuser'
+#mqttPW = '271344'
+
+mqttTopic = b"RedPlayer"
+
+led_onboard = machine.Pin('LED', machine.Pin.OUT, value=0)
+
+# Funktion: WLAN-Verbindung herstellen
+def wlanConnect():
+    wlan = network.WLAN(network.STA_IF)
+    network.country('DE')
+    if not wlan.isconnected():
+        print('WLAN-Verbindung herstellen:', wlanSSID)
+        wlan.active(True)
+        wlan.connect(wlanSSID, wlanPW)
+        for i in range(10):
+            if wlan.status() < 0 or wlan.status() >= 3:
+                break
+            led_onboard.toggle()
+            print('.')
+            time.sleep(1)
+    if wlan.isconnected():
+        print('WLAN-Verbindung hergestellt / WLAN-Status:', wlan.status())
+        print()
+        led_onboard.on()
+    else:
+        print('Keine WLAN-Verbindung / WLAN-Status:', wlan.status())
+        print()
+        led_onboard.off()
+    return wlan
+
+# Funktion: Verbindung zum MQTT-Server herstellen
+def mqttConnect():
+    print("MQTT-Verbindung herstellen: %s mit %s" % (mqttClient, mqttBroker))
+    client = MQTTClient(mqttClient, mqttBroker, keepalive=60)
+    try:
+        client.connect()
+        print('MQTT-Verbindung hergestellt')
+    except Exception as e:
+        print('Fehler bei der MQTT-Verbindung:', e)
+        return None
+    return client
+
+# WLAN-Verbindung herstellen
+print("Starte WLAN-Verbindung...")
+wlan = wlanConnect()
+WlanStatus = wlan.status()
+print("WLAN-Status:", WlanStatus)
+
+# MQTT-Verbindung herstellen
+client = mqttConnect()
+if client:
+    #client.set_callback(on_message)
+    #client.subscribe(b"WerIstDran")
+    #client.subscribe(b"WasIstDeineID")
+    #client.subscribe(b"SeatingOrder")
+    print("Warte auf Nachrichten...")
+else:
+    print("MQTT-Verbindung fehlgeschlagen")

@@ -7,14 +7,23 @@ import utime
 import _thread
 
 # WLAN-Konfiguration
+# wlanSSID = 'Twilight'
+# wlanPW = 'Imperium'
 wlanSSID = 'LordVoldemodem'
 wlanPW = '7Zwergesindlieb'
 
+# Static IP Configuration
+static_ip = '10.42.0.2'  # Replace with your desired IP address
+subnet_mask = '255.255.255.0'  # Replace with your subnet mask
+gateway = '10.42.0.1'  # Replace with your gateway IP
+dns_server = '8.8.8.8'  # Replace with your DNS server IP
+
+
 # MQTT-Konfiguration
-mqttBroker = '192.168.178.141'
-mqttClient = 'RedPlayer'
-mqttUser = 'uuuren'
-mqttPW = '271344'
+mqttBroker = '10.42.0.1'
+mqttClient = 'Rot'
+#mqttUser = 'mqttuser'
+#mqttPW = '271344'
 
 mqttTopic = b"RedPlayer"
 
@@ -49,6 +58,10 @@ def wlanConnect():
             time.sleep(1)
     if wlan.isconnected():
         print('WLAN-Verbindung hergestellt / WLAN-Status:', wlan.status())
+        print("Standard DHCP-Konfiguration:", wlan.ifconfig())
+        #Set static IP configuration
+        wlan.ifconfig((static_ip, subnet_mask, gateway, dns_server))
+        print("Statische IP-Konfiguration:", wlan.ifconfig())
         print()
         led_onboard.on()
     else:
@@ -59,8 +72,8 @@ def wlanConnect():
 
 # Funktion: Verbindung zum MQTT-Server herstellen
 def mqttConnect():
-    print("MQTT-Verbindung herstellen: %s mit %s als %s" % (mqttClient, mqttBroker, mqttUser))
-    client = MQTTClient(mqttClient, mqttBroker, user=mqttUser, password=mqttPW, keepalive=60)
+    print("MQTT-Verbindung herstellen: %s mit %s" % (mqttClient, mqttBroker))
+    client = MQTTClient(mqttClient, mqttBroker, keepalive=60)
     try:
         client.connect()
         print('MQTT-Verbindung hergestellt')
@@ -68,6 +81,17 @@ def mqttConnect():
         print('Fehler bei der MQTT-Verbindung:', e)
         return None
     return client
+
+#def mqttConnect():
+#    print("MQTT-Verbindung herstellen: %s mit %s als %s" % (mqttClient, mqttBroker, mqttUser))
+#    client = MQTTClient(mqttClient, mqttBroker, user=mqttUser, password=mqttPW, keepalive=60)
+#    try:
+#        client.connect()
+#        print('MQTT-Verbindung hergestellt')
+#    except Exception as e:
+#        print('Fehler bei der MQTT-Verbindung:', e)
+#        return None
+#    return client
 
 def handle_switch(switch, prev_state, led, color):
     current_state = switch.value()
