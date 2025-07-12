@@ -3,6 +3,7 @@ import network
 import time
 from umqtt.simple import MQTTClient
 from mfrc522 import MFRC522
+import _thread
 
 # MQTT Configuration
 mqttBroker = "192.168.1.100"  # Replace with your Raspberry Pi's IP address
@@ -11,10 +12,11 @@ mqttTopicInitiative = "Initiative"
 mqttTopicTurn = "Turn"
 clientName = "Client1"  # Replace with Client1, Client2, etc.
 
-# Pins for RFID and Buttons
+# Pins for RFID, Buttons, and Heartbeat LED
 rfid_reader = MFRC522(sck=6, mosi=7, miso=4, rst=22, cs=5)  # Replace with actual pin configuration
 button_red = machine.Pin(15, machine.Pin.IN, machine.Pin.PULL_UP)
 button_green = machine.Pin(16, machine.Pin.IN, machine.Pin.PULL_UP)
+heartbeat_led = machine.Pin(25, machine.Pin.OUT)  # Replace with the pin connected to the heartbeat LED
 
 # Valid RFID cards with initiative values
 valid_initiatives = {
@@ -40,6 +42,12 @@ def wlanConnect():
         print("Connecting to Wi-Fi...")
         time.sleep(1)
     print("Connected to Wi-Fi:", wlan.ifconfig())
+
+# Heartbeat LED Function
+def heartbeat():
+    while True:
+        heartbeat_led.toggle()
+        time.sleep(1)  # Blink every second
 
 # MQTT Callbacks
 def on_message(topic, msg):
@@ -100,6 +108,5 @@ wlanConnect()
 client = mqttConnect()
 client.loop_start()
 
-print("Client started. Waiting for server requests...")
-while True:
-    time.sleep(1)
+# Start Heartbeat LED in a separate thread
+_thread.start_new_thread(heartbeat, ())
