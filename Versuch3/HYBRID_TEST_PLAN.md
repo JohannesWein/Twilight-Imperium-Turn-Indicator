@@ -41,6 +41,16 @@ Der Negative-Flow prueft unter anderem:
 - Live-Konsole zeigt den Verlauf (Timestamp, Topic, Payload).
 - Logdatei ist fuer spaetere Analyse geeignet (Replay/Filter mit jq, Python, etc.).
 
+## Log-Auswertung
+
+Neueste Logdatei automatisch zusammenfassen:
+
+python analyze_hybrid_log.py --real-pico pico_1 --write-summary
+
+Eine konkrete Datei auswerten:
+
+python analyze_hybrid_log.py logs/hybrid_mqtt_20260425_221555.jsonl --real-pico pico_1
+
 ## Wichtige Hinweise
 - Der echte Pico muss fuer diesen Test nicht selbst Buttons lesen koennen.
 - Es reicht, dass er mit MQTT verbunden ist und Outbound-Befehle empfaengt.
