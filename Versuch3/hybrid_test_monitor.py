@@ -160,6 +160,46 @@ class HybridTestMonitor:
 
         print("[FLOW] Scripted round finished. Keep monitor running to inspect remaining traffic.")
 
+    def run_negative_flow(self) -> None:
+        """Runs deterministic invalid input checks against the hub."""
+        print("[FLOW] Starting negative test flow ...")
+
+        # Strategy setup.
+        self.publish_rfid("pico_2", "TAG_SPEAKER", delay_s=1.0)
+
+        # Wrong player scans before active speaker chooses a strategy card.
+        self.publish_rfid("pico_3", "STRAT_2", delay_s=0.5)
+
+        # Active player scans an invalid non-strategy tag in strategy phase.
+        self.publish_rfid("pico_2", "TAG_NAALU", delay_s=0.5)
+
+        # Complete strategy phase with valid choices.
+        strategy_order = ["pico_2", "pico_3", "pico_4", "pico_5", "pico_6", "pico_1"]
+        strategy_values = ["STRAT_1", "STRAT_2", "STRAT_3", "STRAT_4", "STRAT_5", "STRAT_8"]
+        for pid, strat in zip(strategy_order, strategy_values):
+            self.publish_rfid(pid, strat, delay_s=0.6)
+
+        # Wrong player button press during action.
+        self.publish_button("pico_3", "green", delay_s=0.8)
+
+        # Active player tries to pass before strategy action.
+        self.publish_button("pico_2", "red", delay_s=0.6)
+
+        # Valid yellow to enter secondary wait.
+        self.publish_button("pico_2", "yellow", delay_s=0.6)
+
+        # Invalid non-yellow during secondary wait.
+        self.publish_button("pico_3", "green", delay_s=0.5)
+
+        # Valid confirmations to exit secondary wait.
+        for pid in ["pico_3", "pico_4", "pico_5", "pico_6", "pico_1"]:
+            self.publish_button(pid, "yellow", delay_s=0.2)
+
+        # Undo should revert the last valid state change.
+        self.publish_rfid("pico_1", "TAG_UNDO", delay_s=0.7)
+
+        print("[FLOW] Negative test flow finished. Inspect log for red blink/error reactions.")
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Hybrid TI4-HGM monitor and scripted tester")
@@ -181,6 +221,11 @@ def parse_args() -> argparse.Namespace:
         "--scripted-flow",
         action="store_true",
         help="Run built-in scripted user-like flow",
+    )
+    parser.add_argument(
+        "--negative-flow",
+        action="store_true",
+        help="Run invalid-action checks against the hub",
     )
     parser.add_argument(
         "--duration",
@@ -209,6 +254,9 @@ def main() -> int:
 
         if args.scripted_flow:
             monitor.run_scripted_round()
+
+        if args.negative_flow:
+            monitor.run_negative_flow()
 
         print(f"[MON] Monitoring for {args.duration}s ...")
         time.sleep(args.duration)

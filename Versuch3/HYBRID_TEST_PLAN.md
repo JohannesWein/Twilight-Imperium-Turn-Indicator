@@ -16,6 +16,19 @@
 
 python hybrid_test_monitor.py --broker-host 192.168.178.141 --real-pico pico_1 --scripted-flow --duration 180
 
+## Negativtests
+
+Fuer gezielte Fehlbedienungen:
+
+python hybrid_test_monitor.py --broker-host 192.168.178.141 --real-pico pico_1 --negative-flow --duration 120
+
+Der Negative-Flow prueft unter anderem:
+- falscher Spieler scannt in `STATE_STRATEGY`
+- ungueltiger Tag in `STATE_STRATEGY`
+- `red` ohne vorheriges `yellow` in `STATE_ACTION`
+- falscher Button in `STATE_SECONDARY_WAIT`
+- `TAG_UNDO` nach einer gueltigen Zustandsaenderung
+
 ## Was passiert dann
 1. Das Skript subscribed auf:
    - ti4/inbound
