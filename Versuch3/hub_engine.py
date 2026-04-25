@@ -13,6 +13,15 @@ import time
 
 import paho.mqtt.client as mqtt
 
+from hub_config import (
+    BROKER_HOST,
+    BROKER_PORT,
+    RFID_UID_TO_TAG,
+    TOPIC_GLOBAL,
+    TOPIC_INBOUND,
+    TOPIC_OUTBOUND_TEMPLATE,
+)
+
 # ---------------------------------------------------------------------------
 # Logging
 # ---------------------------------------------------------------------------
@@ -26,11 +35,6 @@ log = logging.getLogger("hub_engine")
 # ---------------------------------------------------------------------------
 # Konfiguration
 # ---------------------------------------------------------------------------
-BROKER_HOST = "localhost"
-BROKER_PORT = 1883
-TOPIC_INBOUND = "ti4/inbound"
-TOPIC_OUTBOUND_TEMPLATE = "ti4/outbound/{}"
-TOPIC_GLOBAL = "ti4/outbound/global"
 STATE_FILE = os.path.join(os.path.dirname(__file__), "state.json")
 UNDO_STACK_SIZE = 5
 PICO_IDS = [f"pico_{i}" for i in range(1, 7)]
@@ -251,6 +255,33 @@ class GameEngine:
         candidates.sort(key=lambda x: x[0])
         return candidates[0][1]
 
+    def _next_action_pico_after(self, current_pico_id: str | None) -> str | None:
+        """Gibt den naechsten nicht-gepassten Spieler nach Initiativreihenfolge zurueck."""
+        ordered = sorted(
+            [
+                pid
+                for pid in PICO_IDS
+                if self.picos[pid]["initiative"] is not None
+            ],
+            key=lambda pid: (self.picos[pid]["initiative"], self.picos[pid]["seat_index"]),
+        )
+
+        if not ordered:
+            return None
+
+        if current_pico_id in ordered:
+            start_idx = (ordered.index(current_pico_id) + 1) % len(ordered)
+            for offset in range(len(ordered)):
+                pid = ordered[(start_idx + offset) % len(ordered)]
+                if not self.picos[pid]["has_passed"]:
+                    return pid
+            return None
+
+        for pid in ordered:
+            if not self.picos[pid]["has_passed"]:
+                return pid
+        return None
+
     # -----------------------------------------------------------------------
     # Übergänge
     # -----------------------------------------------------------------------
@@ -278,7 +309,7 @@ class GameEngine:
 
     def _enter_action(self):
         self.state = STATE_ACTION
-        self.active_pico_id = self._next_action_pico()
+        self.active_pico_id = self._next_action_pico_after(None)
         self._leds_action()
         self._save_state()
         log.info("==> STATE_ACTION  (erster Zug: %s)", self.active_pico_id)
@@ -318,22 +349,33 @@ class GameEngine:
     # -----------------------------------------------------------------------
     # RFID-Handling
     # -----------------------------------------------------------------------
+    def _normalize_rfid_uid(self, uid: str) -> str:
+        """Mapped rohe Karten-UIDs auf logische Tags (z. B. STRAT_4)."""
+        mapped = RFID_UID_TO_TAG.get(uid)
+        if mapped:
+            return mapped
+        return uid
+
     def _handle_rfid(self, pico_id: str, uid: str):
-        log.info("RFID: %s scanned '%s' (State: %s)", pico_id, uid, self.state)
+        normalized_uid = self._normalize_rfid_uid(uid)
+        if normalized_uid != uid:
+            log.info("RFID-Mapping: raw '%s' -> '%s'", uid, normalized_uid)
+
+        log.info("RFID: %s scanned '%s' (State: %s)", pico_id, normalized_uid, self.state)
 
         # Admin-Tags (immer gültig)
-        if uid == "TAG_UNDO":
+        if normalized_uid == "TAG_UNDO":
             self._undo()
             return
 
         if self.state == STATE_SETUP:
-            self._rfid_setup(pico_id, uid)
+            self._rfid_setup(pico_id, normalized_uid)
         elif self.state == STATE_STRATEGY:
-            self._rfid_strategy(pico_id, uid)
+            self._rfid_strategy(pico_id, normalized_uid)
         elif self.state == STATE_STATUS:
-            self._rfid_status(pico_id, uid)
+            self._rfid_status(pico_id, normalized_uid)
         else:
-            log.info("RFID '%s' ignoriert in State %s", uid, self.state)
+            log.info("RFID '%s' ignoriert in State %s", normalized_uid, self.state)
 
     def _rfid_setup(self, pico_id: str, uid: str):
         self._push_undo()
@@ -425,9 +467,7 @@ class GameEngine:
         self._push_undo()
 
         if action == "green":
-            # Zug beenden
-            self.picos[pico_id]["has_passed"] = True
-            self.picos[pico_id]["has_played_strategy"] = True  # implizit, sonst wäre Rot nötig
+            # Zug beenden (ohne automatisch zu passen)
             log.info("  %s beendet seinen Zug.", pico_id)
             self._advance_action_turn()
 
@@ -454,7 +494,8 @@ class GameEngine:
 
     def _advance_action_turn(self):
         """Ermittelt den nächsten aktiven Spieler oder wechselt in STATUS."""
-        next_pico = self._next_action_pico()
+        current = self.active_pico_id
+        next_pico = self._next_action_pico_after(current)
         if next_pico is None:
             # Alle gepasst
             self._enter_status()

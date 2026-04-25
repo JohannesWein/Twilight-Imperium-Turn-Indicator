@@ -82,6 +82,11 @@ class TestSetupPhase(unittest.TestCase):
         self.eng.handle_message("pico_1", "button", {"pico_id": "pico_1", "type": "button", "action": "green"})
         self.assertEqual(self.eng.state, hub_engine.STATE_SETUP)
 
+    def test_raw_uid_mapping_sets_naalu(self):
+        # 2152995219 -> TAG_NAALU (via hub_config.RFID_UID_TO_TAG)
+        self.eng.handle_message("pico_2", "rfid", {"pico_id": "pico_2", "type": "rfid", "uid": "2152995219"})
+        self.assertTrue(self.eng.picos["pico_2"]["is_naalu"])
+
 
 class TestStrategyPhase(unittest.TestCase):
 
@@ -133,6 +138,13 @@ class TestStrategyPhase(unittest.TestCase):
         self.assertEqual(eng.state, hub_engine.STATE_STRATEGY)
         self.assertEqual(eng.active_pico_id, "pico_1")
 
+    def test_raw_uid_mapping_sets_strategy_value(self):
+        eng = self._enter_strategy("pico_1")
+        # 2155507331 -> STRAT_1 (via hub_config.RFID_UID_TO_TAG)
+        eng.handle_message("pico_1", "rfid",
+                           {"pico_id": "pico_1", "type": "rfid", "uid": "2155507331"})
+        self.assertEqual(eng.picos["pico_1"]["initiative"], 1)
+
 
 class TestActionPhase(unittest.TestCase):
 
@@ -171,6 +183,12 @@ class TestActionPhase(unittest.TestCase):
         first  = eng.active_pico_id
         eng.handle_message(first, "button", {"pico_id": first, "type": "button", "action": "green"})
         self.assertNotEqual(eng.active_pico_id, first)
+
+    def test_green_button_does_not_mark_passed(self):
+        eng = self._enter_action()
+        active = eng.active_pico_id
+        eng.handle_message(active, "button", {"pico_id": active, "type": "button", "action": "green"})
+        self.assertFalse(eng.picos[active]["has_passed"])
 
     def test_red_without_strategy_rejected(self):
         eng = self._enter_action()
