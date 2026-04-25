@@ -1,0 +1,67 @@
+{
+  "state": "STATE_ACTION",
+  "picos": {
+    "pico_1": {
+      "pico_id": "pico_1",
+      "initiative": 6,
+      "is_naalu": false,
+      "is_speaker": true,
+      "has_played_strategy": false,
+      "has_passed": false,
+      "secondary_done": false,
+      "seat_index": 0
+    },
+    "pico_2": {
+      "pico_id": "pico_2",
+      "initiative": 7,
+      "is_naalu": false,
+      "is_speaker": false,
+      "has_played_strategy": false,
+      "has_passed": false,
+      "secondary_done": false,
+      "seat_index": 1
+    },
+    "pico_3": {
+      "pico_id": "pico_3",
+      "initiative": 4,
+      "is_naalu": false,
+      "is_speaker": false,
+      "has_played_strategy": false,
+      "has_passed": false,
+      "secondary_done": false,
+      "seat_index": 2
+    },
+    "pico_4": {
+      "pico_id": "pico_4",
+      "initiative": 3,
+      "is_naalu": false,
+      "is_speaker": false,
+      "has_played_strategy": false,
+      "has_passed": false,
+      "secondary_done": false,
+      "seat_index": 3
+    },
+    "pico_5": {
+      "pico_id": "pico_5",
+      "initiative": 1,
+      "is_naalu": false,
+      "is_speaker": false,
+      "has_played_strategy": false,
+      "has_passed": false,
+      "secondary_done": false,
+      "seat_index": 4
+    },
+    "pico_6": {
+      "pico_id": "pico_6",
+      "initiative": 5,
+      "is_naalu": false,
+      "is_speaker": false,
+      "has_played_strategy": false,
+      "has_passed": false,
+      "secondary_done": false,
+      "seat_index": 5
+    }
+  },
+  "active_pico_id": "pico_5",
+  "secondary_trigger_pico": null
+}

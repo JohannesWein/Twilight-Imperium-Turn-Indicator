@@ -1,0 +1,44 @@
+{
+  "name": "ti4-hgm-auto-commit",
+  "description": "Auto-commit major work after tests pass, features implemented, or hardware verified",
+  "triggers": {
+    "PostToolUse": ["create_file", "replace_string_in_file", "multi_replace_string_in_file", "execution_subagent"]
+  },
+  "conditions": {
+    "any": [
+      {
+        "name": "tests_passing",
+        "command": "cd {repo_root}/Versuch3 && ../.venv/Scripts/python.exe test_hub_engine.py 2>&1 | Select-String 'OK|FAILED'",
+        "success_pattern": "OK$"
+      },
+      {
+        "name": "git_staged_changes",
+        "command": "git diff --cached --name-only | wc -l",
+        "success_pattern": "^[1-9]"
+      }
+    ]
+  },
+  "actions": [
+    {
+      "name": "stage_changes",
+      "command": "git add -A Versuch3/ .github/instructions/ config.py",
+      "skip_if_no_changes": true
+    },
+    {
+      "name": "generate_commit_message",
+      "command": "powershell -Command \"$changed = git diff --cached --name-only; $summary = 'feat: TI4-HGM'; if ($changed -match 'test_') { $summary += ' - tests passing' }; if ($changed -match 'main|config') { $summary += ' - pico deployment' }; if ($changed -match 'hub_engine') { $summary += ' - state machine' }; echo $summary\"",
+      "capture_output": true,
+      "env_var": "COMMIT_MSG"
+    },
+    {
+      "name": "commit",
+      "command": "git commit -m \"{COMMIT_MSG}\" --no-verify",
+      "skip_if": "no_changes"
+    }
+  ],
+  "post_action": {
+    "log": "Auto-committed: {COMMIT_MSG}"
+  },
+  "enabled": true,
+  "dry_run": false
+}
