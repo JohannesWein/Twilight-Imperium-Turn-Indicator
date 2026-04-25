@@ -19,32 +19,48 @@ from umqtt.robust import MQTTClient
 from mfrc522 import MFRC522
 
 # ---------------------------------------------------------------------------
-# Konfiguration – vor dem Flashen anpassen!
+# Konfiguration
 # ---------------------------------------------------------------------------
-PICO_ID    = "pico_1"          # Eindeutige ID dieses Geräts (pico_1 … pico_6)
-WIFI_SSID  = "DEIN_WLAN_NAME"
-WIFI_PASS  = "DEIN_WLAN_PASSWORT"
-MQTT_HOST  = "192.168.4.1"     # IP des Raspberry Pi Hub (Access Point)
-MQTT_PORT  = 1883
+try:
+    from config import (
+        DEBOUNCE_MS,
+        MQTT_HOST,
+        MQTT_PORT,
+        PICO_ID,
+        PIN_BTN_GREEN,
+        PIN_BTN_RED,
+        PIN_BTN_YELLOW,
+        PIN_NEOPIXEL,
+        PIN_RC522_RST,
+        PIN_SPI_CS,
+        PIN_SPI_MISO,
+        PIN_SPI_MOSI,
+        PIN_SPI_SCK,
+        RFID_RESCAN_DELAY_MS,
+        WIFI_PASS,
+        WIFI_SSID,
+    )
+except ImportError:
+    PICO_ID = "pico_1"
+    WIFI_SSID = "DEIN_WLAN_NAME"
+    WIFI_PASS = "DEIN_WLAN_PASSWORT"
+    MQTT_HOST = "192.168.4.1"
+    MQTT_PORT = 1883
+    DEBOUNCE_MS = 200
+    RFID_RESCAN_DELAY_MS = 2000
+    PIN_BTN_GREEN = 10
+    PIN_BTN_YELLOW = 11
+    PIN_BTN_RED = 12
+    PIN_NEOPIXEL = 22
+    PIN_SPI_MISO = 16
+    PIN_SPI_MOSI = 19
+    PIN_SPI_SCK = 18
+    PIN_SPI_CS = 17
+    PIN_RC522_RST = 15
 
 TOPIC_INBOUND  = b"ti4/inbound"
 TOPIC_SELF     = b"ti4/outbound/" + PICO_ID.encode()
 TOPIC_GLOBAL   = b"ti4/outbound/global"
-
-# GPIO-Pins
-PIN_BTN_GREEN  = 10
-PIN_BTN_YELLOW = 11
-PIN_BTN_RED    = 12
-PIN_NEOPIXEL   = 22
-
-# SPI / RC522
-PIN_SPI_MISO   = 16
-PIN_SPI_MOSI   = 19
-PIN_SPI_SCK    = 18
-PIN_SPI_CS     = 17
-PIN_RC522_RST  = 15
-
-DEBOUNCE_MS    = 200
 
 # ---------------------------------------------------------------------------
 # NeoPixel State
@@ -193,7 +209,6 @@ async def rfid_task(client: MQTTClient):
     rdr = MFRC522(spi=spi, gpioRst=rst, gpioCs=cs)
     last_uid = None
     last_scan_ms = 0
-    RESCAN_DELAY_MS = 2000  # gleiche Karte erst nach 2s erneut akzeptieren
 
     print("RFID-Reader bereit.")
     while True:
@@ -204,7 +219,7 @@ async def rfid_task(client: MQTTClient):
                 if stat == rdr.OK:
                     uid_str = "-".join("{:02X}".format(b) for b in raw_uid)
                     now = time.ticks_ms()
-                    if uid_str != last_uid or time.ticks_diff(now, last_scan_ms) > RESCAN_DELAY_MS:
+                    if uid_str != last_uid or time.ticks_diff(now, last_scan_ms) > RFID_RESCAN_DELAY_MS:
                         last_uid     = uid_str
                         last_scan_ms = now
                         publish(client, {
