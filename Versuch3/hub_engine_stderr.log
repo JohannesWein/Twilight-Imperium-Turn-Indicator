@@ -1,0 +1,431 @@
+22:53:52 [INFO] TI4-HGM Hub Engine startet – Verbinde mit 192.168.178.141:1883 ...
+22:53:52 [INFO] Keine state.json gefunden – starte neu.
+22:53:52 [INFO] Hub Engine läuft. State: STATE_SETUP
+22:53:52 [INFO] Verbunden mit MQTT-Broker 192.168.178.141:1883
+22:53:52 [INFO] Abonniert: ti4/inbound
+22:54:37 [INFO] RFID: pico_1 scanned 'TAG_SPEAKER' (State: STATE_SETUP)
+22:54:37 [INFO]   pico_1 ist der Speaker.
+22:54:37 [INFO] ==> STATE_STRATEGY  (erster Spieler: pico_1)
+22:54:37 [INFO] RFID: pico_1 scanned 'STRAT_2' (State: STATE_STRATEGY)
+22:54:37 [INFO]   pico_1 wählt Initiative 2 (effektiv: 2).
+22:54:37 [INFO] RFID: pico_2 scanned 'STRAT_1' (State: STATE_STRATEGY)
+22:54:37 [INFO]   pico_2 wählt Initiative 1 (effektiv: 1).
+22:54:38 [INFO] RFID: pico_3 scanned 'STRAT_6' (State: STATE_STRATEGY)
+22:54:38 [INFO]   pico_3 wählt Initiative 6 (effektiv: 6).
+22:54:38 [INFO] RFID: pico_4 scanned 'STRAT_3' (State: STATE_STRATEGY)
+22:54:38 [INFO]   pico_4 wählt Initiative 3 (effektiv: 3).
+22:54:38 [INFO] RFID: pico_5 scanned 'STRAT_8' (State: STATE_STRATEGY)
+22:54:38 [INFO]   pico_5 wählt Initiative 8 (effektiv: 8).
+22:54:38 [INFO] RFID: pico_6 scanned 'STRAT_7' (State: STATE_STRATEGY)
+22:54:38 [INFO]   pico_6 wählt Initiative 7 (effektiv: 7).
+22:54:38 [INFO] ==> STATE_ACTION  (erster Zug: pico_2)
+22:54:38 [INFO] Button: pico_2 drückt 'yellow' (State: STATE_ACTION)
+22:54:38 [INFO]   pico_2 spielt die Strategische Primäraktion.
+22:54:38 [INFO] ==> STATE_SECONDARY_WAIT  (ausgelöst von: pico_2)
+22:54:39 [INFO] Button: pico_1 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:54:39 [INFO]   pico_1 bestätigt Sekundäraktion.
+22:54:39 [INFO] Button: pico_3 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:54:39 [INFO]   pico_3 bestätigt Sekundäraktion.
+22:54:39 [INFO] Button: pico_4 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:54:39 [INFO]   pico_4 bestätigt Sekundäraktion.
+22:54:39 [INFO] Button: pico_5 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:54:39 [INFO]   pico_5 bestätigt Sekundäraktion.
+22:54:39 [INFO] Button: pico_6 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:54:39 [INFO]   pico_6 bestätigt Sekundäraktion.
+22:54:39 [INFO]   Alle Sekundäraktionen bestätigt. Zugrecht zurück an pico_2.
+22:54:39 [INFO] Button: pico_2 drückt 'red' (State: STATE_ACTION)
+22:54:39 [INFO]   pico_2 passt.
+22:54:39 [INFO]   Nächster Zug: pico_1
+22:54:40 [INFO] Button: pico_1 drückt 'green' (State: STATE_ACTION)
+22:54:40 [INFO]   pico_1 beendet seinen Zug.
+22:54:40 [INFO]   Nächster Zug: pico_4
+22:54:40 [INFO] Button: pico_4 drückt 'yellow' (State: STATE_ACTION)
+22:54:40 [INFO]   pico_4 spielt die Strategische Primäraktion.
+22:54:40 [INFO] ==> STATE_SECONDARY_WAIT  (ausgelöst von: pico_4)
+22:54:40 [INFO] Button: pico_1 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:54:40 [INFO]   pico_1 bestätigt Sekundäraktion.
+22:54:40 [INFO] Button: pico_2 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:54:40 [INFO]   pico_2 bestätigt Sekundäraktion.
+22:54:40 [INFO] Button: pico_3 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:54:40 [INFO]   pico_3 bestätigt Sekundäraktion.
+22:54:40 [INFO] Button: pico_5 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:54:40 [INFO]   pico_5 bestätigt Sekundäraktion.
+22:54:40 [INFO] Button: pico_6 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:54:40 [INFO]   pico_6 bestätigt Sekundäraktion.
+22:54:40 [INFO]   Alle Sekundäraktionen bestätigt. Zugrecht zurück an pico_4.
+22:54:41 [INFO] Button: pico_4 drückt 'green' (State: STATE_ACTION)
+22:54:41 [INFO]   pico_4 beendet seinen Zug.
+22:54:41 [INFO]   Nächster Zug: pico_3
+22:54:41 [INFO] Button: pico_3 drückt 'yellow' (State: STATE_ACTION)
+22:54:41 [INFO]   pico_3 spielt die Strategische Primäraktion.
+22:54:41 [INFO] ==> STATE_SECONDARY_WAIT  (ausgelöst von: pico_3)
+22:54:41 [INFO] Button: pico_1 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:54:41 [INFO]   pico_1 bestätigt Sekundäraktion.
+22:54:41 [INFO] Button: pico_2 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:54:41 [INFO]   pico_2 bestätigt Sekundäraktion.
+22:54:41 [INFO] Button: pico_4 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:54:41 [INFO]   pico_4 bestätigt Sekundäraktion.
+22:54:41 [INFO] Button: pico_5 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:54:41 [INFO]   pico_5 bestätigt Sekundäraktion.
+22:54:41 [INFO] Button: pico_6 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:54:41 [INFO]   pico_6 bestätigt Sekundäraktion.
+22:54:41 [INFO]   Alle Sekundäraktionen bestätigt. Zugrecht zurück an pico_3.
+22:54:42 [INFO] Button: pico_3 drückt 'red' (State: STATE_ACTION)
+22:54:42 [INFO]   pico_3 passt.
+22:54:42 [INFO]   Nächster Zug: pico_6
+22:54:42 [INFO] Button: pico_6 drückt 'yellow' (State: STATE_ACTION)
+22:54:42 [INFO]   pico_6 spielt die Strategische Primäraktion.
+22:54:42 [INFO] ==> STATE_SECONDARY_WAIT  (ausgelöst von: pico_6)
+22:54:42 [INFO] Button: pico_1 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:54:42 [INFO]   pico_1 bestätigt Sekundäraktion.
+22:54:42 [INFO] Button: pico_2 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:54:42 [INFO]   pico_2 bestätigt Sekundäraktion.
+22:54:42 [INFO] Button: pico_3 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:54:42 [INFO]   pico_3 bestätigt Sekundäraktion.
+22:54:42 [INFO] Button: pico_4 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:54:42 [INFO]   pico_4 bestätigt Sekundäraktion.
+22:54:43 [INFO] Button: pico_5 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:54:43 [INFO]   pico_5 bestätigt Sekundäraktion.
+22:54:43 [INFO]   Alle Sekundäraktionen bestätigt. Zugrecht zurück an pico_6.
+22:54:43 [INFO] Button: pico_6 drückt 'green' (State: STATE_ACTION)
+22:54:43 [INFO]   pico_6 beendet seinen Zug.
+22:54:43 [INFO]   Nächster Zug: pico_5
+22:54:43 [INFO] Button: pico_5 drückt 'green' (State: STATE_ACTION)
+22:54:43 [INFO]   pico_5 beendet seinen Zug.
+22:54:43 [INFO]   Nächster Zug: pico_1
+22:54:43 [INFO] Button: pico_1 drückt 'green' (State: STATE_ACTION)
+22:54:43 [INFO]   pico_1 beendet seinen Zug.
+22:54:43 [INFO]   Nächster Zug: pico_4
+22:54:43 [INFO] Button: pico_4 drückt 'green' (State: STATE_ACTION)
+22:54:43 [INFO]   pico_4 beendet seinen Zug.
+22:54:43 [INFO]   Nächster Zug: pico_6
+22:54:44 [INFO] Button: pico_6 drückt 'red' (State: STATE_ACTION)
+22:54:44 [INFO]   pico_6 passt.
+22:54:44 [INFO]   Nächster Zug: pico_5
+22:54:44 [INFO] Button: pico_5 drückt 'yellow' (State: STATE_ACTION)
+22:54:44 [INFO]   pico_5 spielt die Strategische Primäraktion.
+22:54:44 [INFO] ==> STATE_SECONDARY_WAIT  (ausgelöst von: pico_5)
+22:54:44 [INFO] Button: pico_1 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:54:44 [INFO]   pico_1 bestätigt Sekundäraktion.
+22:54:44 [INFO] Button: pico_2 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:54:44 [INFO]   pico_2 bestätigt Sekundäraktion.
+22:54:44 [INFO] Button: pico_3 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:54:44 [INFO]   pico_3 bestätigt Sekundäraktion.
+22:54:44 [INFO] Button: pico_4 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:54:44 [INFO]   pico_4 bestätigt Sekundäraktion.
+22:54:45 [INFO] Button: pico_6 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:54:45 [INFO]   pico_6 bestätigt Sekundäraktion.
+22:54:45 [INFO]   Alle Sekundäraktionen bestätigt. Zugrecht zurück an pico_5.
+22:54:45 [INFO] Button: pico_5 drückt 'red' (State: STATE_ACTION)
+22:54:45 [INFO]   pico_5 passt.
+22:54:45 [INFO]   Nächster Zug: pico_1
+22:54:45 [INFO] Button: pico_1 drückt 'green' (State: STATE_ACTION)
+22:54:45 [INFO]   pico_1 beendet seinen Zug.
+22:54:45 [INFO]   Nächster Zug: pico_4
+22:54:45 [INFO] Button: pico_4 drückt 'green' (State: STATE_ACTION)
+22:54:45 [INFO]   pico_4 beendet seinen Zug.
+22:54:45 [INFO]   Nächster Zug: pico_1
+22:54:46 [INFO] Button: pico_1 drückt 'yellow' (State: STATE_ACTION)
+22:54:46 [INFO]   pico_1 spielt die Strategische Primäraktion.
+22:54:46 [INFO] ==> STATE_SECONDARY_WAIT  (ausgelöst von: pico_1)
+22:54:46 [INFO] Button: pico_2 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:54:46 [INFO]   pico_2 bestätigt Sekundäraktion.
+22:54:46 [INFO] Button: pico_3 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:54:46 [INFO]   pico_3 bestätigt Sekundäraktion.
+22:54:46 [INFO] Button: pico_4 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:54:46 [INFO]   pico_4 bestätigt Sekundäraktion.
+22:54:46 [INFO] Button: pico_5 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:54:46 [INFO]   pico_5 bestätigt Sekundäraktion.
+22:54:46 [INFO] Button: pico_6 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:54:46 [INFO]   pico_6 bestätigt Sekundäraktion.
+22:54:46 [INFO]   Alle Sekundäraktionen bestätigt. Zugrecht zurück an pico_1.
+22:54:46 [INFO] Button: pico_1 drückt 'red' (State: STATE_ACTION)
+22:54:46 [INFO]   pico_1 passt.
+22:54:46 [INFO]   Nächster Zug: pico_4
+22:54:47 [INFO] Button: pico_4 drückt 'red' (State: STATE_ACTION)
+22:54:47 [INFO]   pico_4 passt.
+22:54:47 [INFO] ==> STATE_STATUS
+22:54:53 [INFO] RFID: pico_1 scanned 'TAG_SPEAKER' (State: STATE_STATUS)
+22:54:53 [INFO]   pico_1 ist der neue Speaker. Neue Runde beginnt.
+22:54:53 [INFO] ==> STATE_STRATEGY  (erster Spieler: pico_1)
+22:54:53 [INFO] RFID: pico_1 scanned 'STRAT_2' (State: STATE_STRATEGY)
+22:54:53 [INFO]   pico_1 wählt Initiative 2 (effektiv: 2).
+22:54:53 [INFO] RFID: pico_2 scanned 'STRAT_1' (State: STATE_STRATEGY)
+22:54:53 [INFO]   pico_2 wählt Initiative 1 (effektiv: 1).
+22:54:53 [INFO] RFID: pico_3 scanned 'STRAT_6' (State: STATE_STRATEGY)
+22:54:53 [INFO]   pico_3 wählt Initiative 6 (effektiv: 6).
+22:54:54 [INFO] RFID: pico_4 scanned 'STRAT_3' (State: STATE_STRATEGY)
+22:54:54 [INFO]   pico_4 wählt Initiative 3 (effektiv: 3).
+22:54:54 [INFO] RFID: pico_5 scanned 'STRAT_8' (State: STATE_STRATEGY)
+22:54:54 [INFO]   pico_5 wählt Initiative 8 (effektiv: 8).
+22:54:54 [INFO] RFID: pico_6 scanned 'STRAT_7' (State: STATE_STRATEGY)
+22:54:54 [INFO]   pico_6 wählt Initiative 7 (effektiv: 7).
+22:54:54 [INFO] ==> STATE_ACTION  (erster Zug: pico_2)
+22:54:54 [INFO] Button: pico_2 drückt 'yellow' (State: STATE_ACTION)
+22:54:54 [INFO]   pico_2 spielt die Strategische Primäraktion.
+22:54:54 [INFO] ==> STATE_SECONDARY_WAIT  (ausgelöst von: pico_2)
+22:54:54 [INFO] Button: pico_1 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:54:54 [INFO]   pico_1 bestätigt Sekundäraktion.
+22:54:55 [INFO] Button: pico_3 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:54:55 [INFO]   pico_3 bestätigt Sekundäraktion.
+22:54:55 [INFO] Button: pico_4 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:54:55 [INFO]   pico_4 bestätigt Sekundäraktion.
+22:54:55 [INFO] Button: pico_5 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:54:55 [INFO]   pico_5 bestätigt Sekundäraktion.
+22:54:55 [INFO] Button: pico_6 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:54:55 [INFO]   pico_6 bestätigt Sekundäraktion.
+22:54:55 [INFO]   Alle Sekundäraktionen bestätigt. Zugrecht zurück an pico_2.
+22:54:55 [INFO] Button: pico_2 drückt 'red' (State: STATE_ACTION)
+22:54:55 [INFO]   pico_2 passt.
+22:54:55 [INFO]   Nächster Zug: pico_1
+22:54:55 [INFO] Button: pico_1 drückt 'green' (State: STATE_ACTION)
+22:54:55 [INFO]   pico_1 beendet seinen Zug.
+22:54:55 [INFO]   Nächster Zug: pico_4
+22:54:56 [INFO] Button: pico_4 drückt 'yellow' (State: STATE_ACTION)
+22:54:56 [INFO]   pico_4 spielt die Strategische Primäraktion.
+22:54:56 [INFO] ==> STATE_SECONDARY_WAIT  (ausgelöst von: pico_4)
+22:54:56 [INFO] Button: pico_1 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:54:56 [INFO]   pico_1 bestätigt Sekundäraktion.
+22:54:56 [INFO] Button: pico_2 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:54:56 [INFO]   pico_2 bestätigt Sekundäraktion.
+22:54:56 [INFO] Button: pico_3 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:54:56 [INFO]   pico_3 bestätigt Sekundäraktion.
+22:54:56 [INFO] Button: pico_5 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:54:56 [INFO]   pico_5 bestätigt Sekundäraktion.
+22:54:56 [INFO] Button: pico_6 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:54:56 [INFO]   pico_6 bestätigt Sekundäraktion.
+22:54:56 [INFO]   Alle Sekundäraktionen bestätigt. Zugrecht zurück an pico_4.
+22:54:56 [INFO] Button: pico_4 drückt 'green' (State: STATE_ACTION)
+22:54:56 [INFO]   pico_4 beendet seinen Zug.
+22:54:56 [INFO]   Nächster Zug: pico_3
+22:54:57 [INFO] Button: pico_3 drückt 'yellow' (State: STATE_ACTION)
+22:54:57 [INFO]   pico_3 spielt die Strategische Primäraktion.
+22:54:57 [INFO] ==> STATE_SECONDARY_WAIT  (ausgelöst von: pico_3)
+22:54:57 [INFO] Button: pico_1 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:54:57 [INFO]   pico_1 bestätigt Sekundäraktion.
+22:54:57 [INFO] Button: pico_2 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:54:57 [INFO]   pico_2 bestätigt Sekundäraktion.
+22:54:57 [INFO] Button: pico_4 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:54:57 [INFO]   pico_4 bestätigt Sekundäraktion.
+22:54:57 [INFO] Button: pico_5 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:54:57 [INFO]   pico_5 bestätigt Sekundäraktion.
+22:54:57 [INFO] Button: pico_6 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:54:57 [INFO]   pico_6 bestätigt Sekundäraktion.
+22:54:57 [INFO]   Alle Sekundäraktionen bestätigt. Zugrecht zurück an pico_3.
+22:54:57 [INFO] Button: pico_3 drückt 'red' (State: STATE_ACTION)
+22:54:57 [INFO]   pico_3 passt.
+22:54:57 [INFO]   Nächster Zug: pico_6
+22:54:58 [INFO] Button: pico_6 drückt 'yellow' (State: STATE_ACTION)
+22:54:58 [INFO]   pico_6 spielt die Strategische Primäraktion.
+22:54:58 [INFO] ==> STATE_SECONDARY_WAIT  (ausgelöst von: pico_6)
+22:54:58 [INFO] Button: pico_1 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:54:58 [INFO]   pico_1 bestätigt Sekundäraktion.
+22:54:58 [INFO] Button: pico_2 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:54:58 [INFO]   pico_2 bestätigt Sekundäraktion.
+22:54:58 [INFO] Button: pico_3 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:54:58 [INFO]   pico_3 bestätigt Sekundäraktion.
+22:54:58 [INFO] Button: pico_4 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:54:58 [INFO]   pico_4 bestätigt Sekundäraktion.
+22:54:58 [INFO] Button: pico_5 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:54:58 [INFO]   pico_5 bestätigt Sekundäraktion.
+22:54:58 [INFO]   Alle Sekundäraktionen bestätigt. Zugrecht zurück an pico_6.
+22:54:59 [INFO] Button: pico_6 drückt 'green' (State: STATE_ACTION)
+22:54:59 [INFO]   pico_6 beendet seinen Zug.
+22:54:59 [INFO]   Nächster Zug: pico_5
+22:54:59 [INFO] Button: pico_5 drückt 'green' (State: STATE_ACTION)
+22:54:59 [INFO]   pico_5 beendet seinen Zug.
+22:54:59 [INFO]   Nächster Zug: pico_1
+22:54:59 [INFO] Button: pico_1 drückt 'green' (State: STATE_ACTION)
+22:54:59 [INFO]   pico_1 beendet seinen Zug.
+22:54:59 [INFO]   Nächster Zug: pico_4
+22:54:59 [INFO] Button: pico_4 drückt 'green' (State: STATE_ACTION)
+22:54:59 [INFO]   pico_4 beendet seinen Zug.
+22:54:59 [INFO]   Nächster Zug: pico_6
+22:54:59 [INFO] Button: pico_6 drückt 'red' (State: STATE_ACTION)
+22:54:59 [INFO]   pico_6 passt.
+22:54:59 [INFO]   Nächster Zug: pico_5
+22:55:00 [INFO] Button: pico_5 drückt 'yellow' (State: STATE_ACTION)
+22:55:00 [INFO]   pico_5 spielt die Strategische Primäraktion.
+22:55:00 [INFO] ==> STATE_SECONDARY_WAIT  (ausgelöst von: pico_5)
+22:55:00 [INFO] Button: pico_1 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:55:00 [INFO]   pico_1 bestätigt Sekundäraktion.
+22:55:00 [INFO] Button: pico_2 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:55:00 [INFO]   pico_2 bestätigt Sekundäraktion.
+22:55:00 [INFO] Button: pico_3 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:55:00 [INFO]   pico_3 bestätigt Sekundäraktion.
+22:55:00 [INFO] Button: pico_4 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:55:00 [INFO]   pico_4 bestätigt Sekundäraktion.
+22:55:00 [INFO] Button: pico_6 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:55:00 [INFO]   pico_6 bestätigt Sekundäraktion.
+22:55:00 [INFO]   Alle Sekundäraktionen bestätigt. Zugrecht zurück an pico_5.
+22:55:01 [INFO] Button: pico_5 drückt 'red' (State: STATE_ACTION)
+22:55:01 [INFO]   pico_5 passt.
+22:55:01 [INFO]   Nächster Zug: pico_1
+22:55:01 [INFO] Button: pico_1 drückt 'green' (State: STATE_ACTION)
+22:55:01 [INFO]   pico_1 beendet seinen Zug.
+22:55:01 [INFO]   Nächster Zug: pico_4
+22:55:01 [INFO] Button: pico_4 drückt 'green' (State: STATE_ACTION)
+22:55:01 [INFO]   pico_4 beendet seinen Zug.
+22:55:01 [INFO]   Nächster Zug: pico_1
+22:55:01 [INFO] Button: pico_1 drückt 'yellow' (State: STATE_ACTION)
+22:55:01 [INFO]   pico_1 spielt die Strategische Primäraktion.
+22:55:01 [INFO] ==> STATE_SECONDARY_WAIT  (ausgelöst von: pico_1)
+22:55:02 [INFO] Button: pico_2 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:55:02 [INFO]   pico_2 bestätigt Sekundäraktion.
+22:55:02 [INFO] Button: pico_3 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:55:02 [INFO]   pico_3 bestätigt Sekundäraktion.
+22:55:02 [INFO] Button: pico_4 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:55:02 [INFO]   pico_4 bestätigt Sekundäraktion.
+22:55:02 [INFO] Button: pico_5 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:55:02 [INFO]   pico_5 bestätigt Sekundäraktion.
+22:55:02 [INFO] Button: pico_6 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:55:02 [INFO]   pico_6 bestätigt Sekundäraktion.
+22:55:02 [INFO]   Alle Sekundäraktionen bestätigt. Zugrecht zurück an pico_1.
+22:55:02 [INFO] Button: pico_1 drückt 'red' (State: STATE_ACTION)
+22:55:02 [INFO]   pico_1 passt.
+22:55:02 [INFO]   Nächster Zug: pico_4
+22:55:03 [INFO] Button: pico_4 drückt 'red' (State: STATE_ACTION)
+22:55:03 [INFO]   pico_4 passt.
+22:55:03 [INFO] ==> STATE_STATUS
+22:55:11 [INFO] RFID: pico_1 scanned 'TAG_SPEAKER' (State: STATE_STATUS)
+22:55:11 [INFO]   pico_1 ist der neue Speaker. Neue Runde beginnt.
+22:55:11 [INFO] ==> STATE_STRATEGY  (erster Spieler: pico_1)
+22:55:11 [INFO] RFID: pico_1 scanned 'STRAT_2' (State: STATE_STRATEGY)
+22:55:11 [INFO]   pico_1 wählt Initiative 2 (effektiv: 2).
+22:55:12 [INFO] RFID: pico_2 scanned 'STRAT_1' (State: STATE_STRATEGY)
+22:55:12 [INFO]   pico_2 wählt Initiative 1 (effektiv: 1).
+22:55:12 [INFO] RFID: pico_3 scanned 'STRAT_6' (State: STATE_STRATEGY)
+22:55:12 [INFO]   pico_3 wählt Initiative 6 (effektiv: 6).
+22:55:12 [INFO] RFID: pico_4 scanned 'STRAT_3' (State: STATE_STRATEGY)
+22:55:12 [INFO]   pico_4 wählt Initiative 3 (effektiv: 3).
+22:55:12 [INFO] RFID: pico_5 scanned 'STRAT_8' (State: STATE_STRATEGY)
+22:55:12 [INFO]   pico_5 wählt Initiative 8 (effektiv: 8).
+22:55:12 [INFO] RFID: pico_6 scanned 'STRAT_7' (State: STATE_STRATEGY)
+22:55:12 [INFO]   pico_6 wählt Initiative 7 (effektiv: 7).
+22:55:13 [INFO] ==> STATE_ACTION  (erster Zug: pico_2)
+22:55:13 [INFO] Button: pico_2 drückt 'yellow' (State: STATE_ACTION)
+22:55:13 [INFO]   pico_2 spielt die Strategische Primäraktion.
+22:55:13 [INFO] ==> STATE_SECONDARY_WAIT  (ausgelöst von: pico_2)
+22:55:13 [INFO] Button: pico_1 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:55:13 [INFO]   pico_1 bestätigt Sekundäraktion.
+22:55:13 [INFO] Button: pico_3 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:55:13 [INFO]   pico_3 bestätigt Sekundäraktion.
+22:55:13 [INFO] Button: pico_4 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:55:13 [INFO]   pico_4 bestätigt Sekundäraktion.
+22:55:13 [INFO] Button: pico_5 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:55:13 [INFO]   pico_5 bestätigt Sekundäraktion.
+22:55:13 [INFO] Button: pico_6 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:55:13 [INFO]   pico_6 bestätigt Sekundäraktion.
+22:55:13 [INFO]   Alle Sekundäraktionen bestätigt. Zugrecht zurück an pico_2.
+22:55:14 [INFO] Button: pico_2 drückt 'red' (State: STATE_ACTION)
+22:55:14 [INFO]   pico_2 passt.
+22:55:14 [INFO]   Nächster Zug: pico_1
+22:55:14 [INFO] Button: pico_1 drückt 'green' (State: STATE_ACTION)
+22:55:14 [INFO]   pico_1 beendet seinen Zug.
+22:55:14 [INFO]   Nächster Zug: pico_4
+22:55:14 [INFO] Button: pico_4 drückt 'yellow' (State: STATE_ACTION)
+22:55:14 [INFO]   pico_4 spielt die Strategische Primäraktion.
+22:55:14 [INFO] ==> STATE_SECONDARY_WAIT  (ausgelöst von: pico_4)
+22:55:14 [INFO] Button: pico_1 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:55:14 [INFO]   pico_1 bestätigt Sekundäraktion.
+22:55:14 [INFO] Button: pico_2 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:55:14 [INFO]   pico_2 bestätigt Sekundäraktion.
+22:55:14 [INFO] Button: pico_3 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:55:14 [INFO]   pico_3 bestätigt Sekundäraktion.
+22:55:15 [INFO] Button: pico_5 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:55:15 [INFO]   pico_5 bestätigt Sekundäraktion.
+22:55:15 [INFO] Button: pico_6 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:55:15 [INFO]   pico_6 bestätigt Sekundäraktion.
+22:55:15 [INFO]   Alle Sekundäraktionen bestätigt. Zugrecht zurück an pico_4.
+22:55:15 [INFO] Button: pico_4 drückt 'green' (State: STATE_ACTION)
+22:55:15 [INFO]   pico_4 beendet seinen Zug.
+22:55:15 [INFO]   Nächster Zug: pico_3
+22:55:15 [INFO] Button: pico_3 drückt 'yellow' (State: STATE_ACTION)
+22:55:15 [INFO]   pico_3 spielt die Strategische Primäraktion.
+22:55:15 [INFO] ==> STATE_SECONDARY_WAIT  (ausgelöst von: pico_3)
+22:55:15 [INFO] Button: pico_1 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:55:15 [INFO]   pico_1 bestätigt Sekundäraktion.
+22:55:15 [INFO] Button: pico_2 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:55:15 [INFO]   pico_2 bestätigt Sekundäraktion.
+22:55:15 [INFO] Button: pico_4 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:55:15 [INFO]   pico_4 bestätigt Sekundäraktion.
+22:55:16 [INFO] Button: pico_5 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:55:16 [INFO]   pico_5 bestätigt Sekundäraktion.
+22:55:16 [INFO] Button: pico_6 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:55:16 [INFO]   pico_6 bestätigt Sekundäraktion.
+22:55:16 [INFO]   Alle Sekundäraktionen bestätigt. Zugrecht zurück an pico_3.
+22:55:16 [INFO] Button: pico_3 drückt 'red' (State: STATE_ACTION)
+22:55:16 [INFO]   pico_3 passt.
+22:55:16 [INFO]   Nächster Zug: pico_6
+22:55:16 [INFO] Button: pico_6 drückt 'yellow' (State: STATE_ACTION)
+22:55:16 [INFO]   pico_6 spielt die Strategische Primäraktion.
+22:55:16 [INFO] ==> STATE_SECONDARY_WAIT  (ausgelöst von: pico_6)
+22:55:17 [INFO] Button: pico_1 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:55:17 [INFO]   pico_1 bestätigt Sekundäraktion.
+22:55:17 [INFO] Button: pico_2 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:55:17 [INFO]   pico_2 bestätigt Sekundäraktion.
+22:55:17 [INFO] Button: pico_3 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:55:17 [INFO]   pico_3 bestätigt Sekundäraktion.
+22:55:17 [INFO] Button: pico_4 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:55:17 [INFO]   pico_4 bestätigt Sekundäraktion.
+22:55:17 [INFO] Button: pico_5 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:55:17 [INFO]   pico_5 bestätigt Sekundäraktion.
+22:55:17 [INFO]   Alle Sekundäraktionen bestätigt. Zugrecht zurück an pico_6.
+22:55:17 [INFO] Button: pico_6 drückt 'green' (State: STATE_ACTION)
+22:55:17 [INFO]   pico_6 beendet seinen Zug.
+22:55:17 [INFO]   Nächster Zug: pico_5
+22:55:17 [INFO] Button: pico_5 drückt 'green' (State: STATE_ACTION)
+22:55:17 [INFO]   pico_5 beendet seinen Zug.
+22:55:17 [INFO]   Nächster Zug: pico_1
+22:55:18 [INFO] Button: pico_1 drückt 'green' (State: STATE_ACTION)
+22:55:18 [INFO]   pico_1 beendet seinen Zug.
+22:55:18 [INFO]   Nächster Zug: pico_4
+22:55:18 [INFO] Button: pico_4 drückt 'green' (State: STATE_ACTION)
+22:55:18 [INFO]   pico_4 beendet seinen Zug.
+22:55:18 [INFO]   Nächster Zug: pico_6
+22:55:18 [INFO] Button: pico_6 drückt 'red' (State: STATE_ACTION)
+22:55:18 [INFO]   pico_6 passt.
+22:55:18 [INFO]   Nächster Zug: pico_5
+22:55:18 [INFO] Button: pico_5 drückt 'yellow' (State: STATE_ACTION)
+22:55:18 [INFO]   pico_5 spielt die Strategische Primäraktion.
+22:55:18 [INFO] ==> STATE_SECONDARY_WAIT  (ausgelöst von: pico_5)
+22:55:19 [INFO] Button: pico_1 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:55:19 [INFO]   pico_1 bestätigt Sekundäraktion.
+22:55:19 [INFO] Button: pico_2 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:55:19 [INFO]   pico_2 bestätigt Sekundäraktion.
+22:55:19 [INFO] Button: pico_3 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:55:19 [INFO]   pico_3 bestätigt Sekundäraktion.
+22:55:19 [INFO] Button: pico_4 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:55:19 [INFO]   pico_4 bestätigt Sekundäraktion.
+22:55:19 [INFO] Button: pico_6 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:55:19 [INFO]   pico_6 bestätigt Sekundäraktion.
+22:55:19 [INFO]   Alle Sekundäraktionen bestätigt. Zugrecht zurück an pico_5.
+22:55:19 [INFO] Button: pico_5 drückt 'red' (State: STATE_ACTION)
+22:55:19 [INFO]   pico_5 passt.
+22:55:19 [INFO]   Nächster Zug: pico_1
+22:55:20 [INFO] Button: pico_1 drückt 'green' (State: STATE_ACTION)
+22:55:20 [INFO]   pico_1 beendet seinen Zug.
+22:55:20 [INFO]   Nächster Zug: pico_4
+22:55:20 [INFO] Button: pico_4 drückt 'green' (State: STATE_ACTION)
+22:55:20 [INFO]   pico_4 beendet seinen Zug.
+22:55:20 [INFO]   Nächster Zug: pico_1
+22:55:20 [INFO] Button: pico_1 drückt 'yellow' (State: STATE_ACTION)
+22:55:20 [INFO]   pico_1 spielt die Strategische Primäraktion.
+22:55:20 [INFO] ==> STATE_SECONDARY_WAIT  (ausgelöst von: pico_1)
+22:55:20 [INFO] Button: pico_2 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:55:20 [INFO]   pico_2 bestätigt Sekundäraktion.
+22:55:20 [INFO] Button: pico_3 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:55:20 [INFO]   pico_3 bestätigt Sekundäraktion.
+22:55:20 [INFO] Button: pico_4 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:55:20 [INFO]   pico_4 bestätigt Sekundäraktion.
+22:55:20 [INFO] Button: pico_5 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:55:20 [INFO]   pico_5 bestätigt Sekundäraktion.
+22:55:20 [INFO] Button: pico_6 drückt 'yellow' (State: STATE_SECONDARY_WAIT)
+22:55:20 [INFO]   pico_6 bestätigt Sekundäraktion.
+22:55:20 [INFO]   Alle Sekundäraktionen bestätigt. Zugrecht zurück an pico_1.
+22:55:21 [INFO] Button: pico_1 drückt 'red' (State: STATE_ACTION)
+22:55:21 [INFO]   pico_1 passt.
+22:55:21 [INFO]   Nächster Zug: pico_4
+22:55:21 [INFO] Button: pico_4 drückt 'red' (State: STATE_ACTION)
+22:55:21 [INFO]   pico_4 passt.
+22:55:21 [INFO] ==> STATE_STATUS
