@@ -83,8 +83,8 @@ class TestSetupPhase(unittest.TestCase):
         self.assertEqual(self.eng.state, hub_engine.STATE_SETUP)
 
     def test_raw_uid_mapping_sets_naalu(self):
-        # 2152995219 -> TAG_NAALU (via hub_config.RFID_UID_TO_TAG)
-        self.eng.handle_message("pico_2", "rfid", {"pico_id": "pico_2", "type": "rfid", "uid": "2152995219"})
+        # 2467910784 -> TAG_NAALU (via hub_config.RFID_UID_TO_TAG)
+        self.eng.handle_message("pico_2", "rfid", {"pico_id": "pico_2", "type": "rfid", "uid": "2467910784"})
         self.assertTrue(self.eng.picos["pico_2"]["is_naalu"])
 
 
@@ -140,9 +140,9 @@ class TestStrategyPhase(unittest.TestCase):
 
     def test_raw_uid_mapping_sets_strategy_value(self):
         eng = self._enter_strategy("pico_1")
-        # 2155507331 -> STRAT_1 (via hub_config.RFID_UID_TO_TAG)
+        # 2205055616 -> STRAT_1 (via hub_config.RFID_UID_TO_TAG)
         eng.handle_message("pico_1", "rfid",
-                           {"pico_id": "pico_1", "type": "rfid", "uid": "2155507331"})
+                           {"pico_id": "pico_1", "type": "rfid", "uid": "2205055616"})
         self.assertEqual(eng.picos["pico_1"]["initiative"], 1)
 
 
