@@ -9,6 +9,10 @@ BROKER_PORT = 1883
 TOPIC_INBOUND = "ti4/inbound"
 TOPIC_OUTBOUND_TEMPLATE = "ti4/outbound/{}"
 TOPIC_GLOBAL = "ti4/outbound/global"
+TOPIC_STATE = "ti4/state"
+
+# Health/monitoring
+PICO_ONLINE_TIMEOUT_S = 30
 
 # RFID UID -> logischer Tag
 # Erwartete logische Tags:

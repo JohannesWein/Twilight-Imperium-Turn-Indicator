@@ -1,4 +1,10 @@
 # main.py – TI4 Haptic Game Master: Pico W Client
+# Default runtime path is the stable polling client.
+from main_polling import main as polling_main
+
+polling_main()
+
+# Legacy async implementation remains below for reference.
 # MicroPython – Raspberry Pi Pico W
 #
 # Hardware-Verkabelung (siehe TI4_HGM_Wiring_Plan.md):

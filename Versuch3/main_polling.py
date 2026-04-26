@@ -34,6 +34,11 @@ from mfrc522 import MFRC522
 TOPIC_INBOUND = b"ti4/inbound"
 TOPIC_SELF = ("ti4/outbound/" + PICO_ID).encode()
 TOPIC_GLOBAL = b"ti4/outbound/global"
+FW_VERSION = "main_polling_v1"
+
+
+def now_ms():
+    return time.ticks_ms()
 
 
 def publish(client, payload):
@@ -109,9 +114,11 @@ def main():
 
     last_uid = None
     last_uid_ms = 0
+    seq = 0
+    last_heartbeat_ms = 0
 
     while True:
-        now = time.ticks_ms()
+        now = now_ms()
 
         # Keep MQTT receive path alive and auto-recover on disconnect.
         try:
@@ -131,12 +138,23 @@ def main():
                 btn_last[name] = val
                 btn_ms[name] = now
             elif val == 0 and time.ticks_diff(now, btn_ms[name]) > DEBOUNCE_MS:
-                publish(client, {"pico_id": PICO_ID, "type": "button", "action": name})
+                seq += 1
+                publish(
+                    client,
+                    {
+                        "pico_id": PICO_ID,
+                        "type": "button",
+                        "action": name,
+                        "ts_ms": now,
+                        "seq": seq,
+                        "fw": FW_VERSION,
+                    },
+                )
                 print("BUTTON", name)
                 led.toggle()
                 while pin.value() == 0:
                     time.sleep_ms(10)
-                btn_ms[name] = time.ticks_ms()
+                btn_ms[name] = now_ms()
 
         # RFID
         try:
@@ -146,7 +164,18 @@ def main():
                 if status == reader.OK:
                     uid = uid_hex(raw_uid)
                     if uid != last_uid or time.ticks_diff(now, last_uid_ms) > RFID_RESCAN_DELAY_MS:
-                        publish(client, {"pico_id": PICO_ID, "type": "rfid", "uid": uid})
+                        seq += 1
+                        publish(
+                            client,
+                            {
+                                "pico_id": PICO_ID,
+                                "type": "rfid",
+                                "uid": uid,
+                                "ts_ms": now,
+                                "seq": seq,
+                                "fw": FW_VERSION,
+                            },
+                        )
                         print("RFID", uid)
                         led.toggle()
                         last_uid = uid
@@ -154,7 +183,22 @@ def main():
         except Exception as exc:
             print("RFID_ERROR", exc)
 
+        if time.ticks_diff(now, last_heartbeat_ms) > 10000:
+            seq += 1
+            publish(
+                client,
+                {
+                    "pico_id": PICO_ID,
+                    "type": "heartbeat",
+                    "ts_ms": now,
+                    "seq": seq,
+                    "fw": FW_VERSION,
+                },
+            )
+            last_heartbeat_ms = now
+
         time.sleep_ms(40)
 
 
-main()
+if __name__ == "__main__":
+    main()

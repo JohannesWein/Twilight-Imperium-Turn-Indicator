@@ -16,10 +16,12 @@ import paho.mqtt.client as mqtt
 from hub_config import (
     BROKER_HOST,
     BROKER_PORT,
+    PICO_ONLINE_TIMEOUT_S,
     RFID_UID_TO_TAG,
     TOPIC_GLOBAL,
     TOPIC_INBOUND,
     TOPIC_OUTBOUND_TEMPLATE,
+    TOPIC_STATE,
 )
 
 # ---------------------------------------------------------------------------
@@ -84,6 +86,10 @@ class GameEngine:
         self.client = mqtt_client
         self.state: str = STATE_SETUP
         self.picos: dict[str, dict] = {pid: default_pico(pid) for pid in PICO_IDS}
+        self.health: dict[str, dict] = {
+            pid: {"last_seen_ms": 0, "last_msg_type": None, "online": False}
+            for pid in PICO_IDS
+        }
         self.active_pico_id: str | None = None   # Pico, der gerade dran ist
         self.secondary_trigger_pico: str | None = None  # Wer die Strategische Aktion ausgelöst hat
         self._undo_stack: list[dict] = []        # Stack der letzten Spielzustände
@@ -93,6 +99,37 @@ class GameEngine:
             self.picos[pid]["seat_index"] = i
 
         self._load_state()
+
+    def _now_ms(self) -> int:
+        return int(time.time() * 1000)
+
+    def _touch_pico(self, pico_id: str, msg_type: str):
+        now = self._now_ms()
+        self.health[pico_id]["last_seen_ms"] = now
+        self.health[pico_id]["last_msg_type"] = msg_type
+        self.health[pico_id]["online"] = True
+
+    def _refresh_online_flags(self):
+        now = self._now_ms()
+        threshold_ms = PICO_ONLINE_TIMEOUT_S * 1000
+        for pid in PICO_IDS:
+            last_seen = self.health[pid]["last_seen_ms"]
+            self.health[pid]["online"] = (last_seen > 0) and ((now - last_seen) <= threshold_ms)
+
+    def _state_snapshot(self) -> dict:
+        self._refresh_online_flags()
+        return {
+            "type": "state",
+            "ts_ms": self._now_ms(),
+            "state": self.state,
+            "active_pico_id": self.active_pico_id,
+            "secondary_trigger_pico": self.secondary_trigger_pico,
+            "picos": self.picos,
+            "health": self.health,
+        }
+
+    def publish_state_snapshot(self):
+        self.client.publish(TOPIC_STATE, json.dumps(self._state_snapshot()))
 
     # -----------------------------------------------------------------------
     # Persistenz
@@ -298,6 +335,7 @@ class GameEngine:
             # is_naalu und is_speaker bleiben bis TAG_SPEAKER/TAG_NAALU gesetzt
         self._leds_setup()
         self._save_state()
+        self.publish_state_snapshot()
         log.info("==> STATE_SETUP")
 
     def _enter_strategy(self):
@@ -305,6 +343,7 @@ class GameEngine:
         self.active_pico_id = self._next_strategy_pico()
         self._leds_strategy()
         self._save_state()
+        self.publish_state_snapshot()
         log.info("==> STATE_STRATEGY  (erster Spieler: %s)", self.active_pico_id)
 
     def _enter_action(self):
@@ -312,6 +351,7 @@ class GameEngine:
         self.active_pico_id = self._next_action_pico_after(None)
         self._leds_action()
         self._save_state()
+        self.publish_state_snapshot()
         log.info("==> STATE_ACTION  (erster Zug: %s)", self.active_pico_id)
 
     def _enter_secondary_wait(self, trigger_pico: str):
@@ -322,6 +362,7 @@ class GameEngine:
             self.picos[pid]["secondary_done"] = (pid == trigger_pico)
         self._leds_secondary_wait()
         self._save_state()
+        self.publish_state_snapshot()
         log.info("==> STATE_SECONDARY_WAIT  (ausgelöst von: %s)", trigger_pico)
 
     def _enter_status(self):
@@ -329,6 +370,7 @@ class GameEngine:
         self.active_pico_id = None
         self._leds_status()
         self._save_state()
+        self.publish_state_snapshot()
         log.info("==> STATE_STATUS")
 
     # -----------------------------------------------------------------------
@@ -339,12 +381,23 @@ class GameEngine:
             log.warning("Unbekannte pico_id: %s", pico_id)
             return
 
+        self._touch_pico(pico_id, msg_type)
+
         if msg_type == "rfid":
             self._handle_rfid(pico_id, payload.get("uid", ""))
         elif msg_type == "button":
             self._handle_button(pico_id, payload.get("action", ""))
+        elif msg_type == "heartbeat":
+            self._handle_heartbeat(pico_id, payload)
         else:
             log.warning("Unbekannter Nachrichtentyp: %s", msg_type)
+
+        self.publish_state_snapshot()
+
+    def _handle_heartbeat(self, pico_id: str, payload: dict):
+        fw = payload.get("fw")
+        seq = payload.get("seq")
+        log.debug("Heartbeat von %s fw=%s seq=%s", pico_id, fw, seq)
 
     # -----------------------------------------------------------------------
     # RFID-Handling
@@ -383,6 +436,7 @@ class GameEngine:
             self.picos[pico_id]["is_naalu"] = True
             log.info("  %s ist das Naalu-Kollektiv.", pico_id)
             self._save_state()
+            self.publish_state_snapshot()
         elif uid == "TAG_SPEAKER":
             # Vorherigen Speaker zurücksetzen
             for pid in PICO_IDS:
@@ -536,8 +590,10 @@ class GameEngine:
             self.secondary_trigger_pico = None
             self._leds_action()
             self._save_state()
+            self.publish_state_snapshot()
         else:
             self._save_state()
+            self.publish_state_snapshot()
 
 
 # ---------------------------------------------------------------------------
@@ -592,6 +648,7 @@ def main():
         sys.exit(1)
 
     _engine = GameEngine(client)
+    _engine.publish_state_snapshot()
 
     # Wenn frischer Start (kein State geladen), LEDs initialisieren
     if _engine.state == STATE_SETUP and not os.path.exists(STATE_FILE):
