@@ -3,9 +3,11 @@
 Alle Hub-Laufzeitwerte und RFID-Mappings werden hier zentral gepflegt.
 """
 
+import os
+
 # MQTT
-BROKER_HOST = "localhost"
-BROKER_PORT = 1883
+BROKER_HOST = os.getenv("TI4_BROKER_HOST", "localhost")
+BROKER_PORT = int(os.getenv("TI4_BROKER_PORT", "1883"))
 TOPIC_INBOUND = "ti4/inbound"
 TOPIC_OUTBOUND_TEMPLATE = "ti4/outbound/{}"
 TOPIC_GLOBAL = "ti4/outbound/global"

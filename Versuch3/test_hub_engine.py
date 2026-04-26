@@ -5,6 +5,7 @@ Testet die GameEngine-Logik ohne echten MQTT-Broker.
 
 import json
 import os
+import random
 import sys
 import unittest
 from unittest.mock import MagicMock, call, patch
@@ -394,6 +395,111 @@ class TestFullGameRound(unittest.TestCase):
 
         # --- STATUS ---
         self.assertEqual(eng.state, hub_engine.STATE_STATUS)
+
+
+class TestRandomizedTurnFlow(unittest.TestCase):
+    """Randomisierte Simulationsläufe für Turn-Reihenfolge und Pass-Logik."""
+
+    def _setup_random_strategy_round(self, seed: int) -> hub_engine.GameEngine:
+        rng = random.Random(seed)
+        eng = make_engine()
+
+        # Speaker setzen und in STRATEGY wechseln.
+        eng.handle_message(
+            "pico_1",
+            "rfid",
+            {"pico_id": "pico_1", "type": "rfid", "uid": "TAG_SPEAKER"},
+        )
+        self.assertEqual(eng.state, hub_engine.STATE_STRATEGY)
+
+        # Zufällige, eindeutige Strategy-Karten für 6 Spieler.
+        strategy_values = rng.sample(list(range(1, 9)), 6)
+        order = eng._strategy_order()
+        for pid, strat in zip(order, strategy_values):
+            eng.handle_message(
+                pid,
+                "rfid",
+                {"pico_id": pid, "type": "rfid", "uid": f"STRAT_{strat}"},
+            )
+
+        self.assertEqual(eng.state, hub_engine.STATE_ACTION)
+        return eng
+
+    def test_randomized_players_are_recalled_until_pass(self):
+        # Mehrere Seeds für robuste, reproduzierbare Zufallssimulation.
+        for seed in (7, 11, 19, 23, 31):
+            with self.subTest(seed=seed):
+                rng = random.Random(seed)
+                eng = self._setup_random_strategy_round(seed)
+
+                active_sequence: list[str] = []
+                green_indices: dict[str, list[int]] = {pid: [] for pid in hub_engine.PICO_IDS}
+                pass_index: dict[str, int] = {}
+                turns_seen: dict[str, int] = {pid: 0 for pid in hub_engine.PICO_IDS}
+
+                safety = 0
+                while eng.state == hub_engine.STATE_ACTION and safety < 500:
+                    safety += 1
+                    active = eng.active_pico_id
+                    self.assertIsNotNone(active)
+                    active_sequence.append(active)
+                    idx = len(active_sequence) - 1
+                    turns_seen[active] += 1
+
+                    if not eng.picos[active]["has_played_strategy"]:
+                        # Wer die Strategie noch nicht gespielt hat, macht erst grün oder gelb.
+                        action = "yellow" if rng.random() < 0.55 else "green"
+                    else:
+                        # Danach zufällig weiterspielen oder passen.
+                        pass_prob = min(0.25 + 0.12 * turns_seen[active], 0.9)
+                        action = "red" if rng.random() < pass_prob else "green"
+
+                    eng.handle_message(
+                        active,
+                        "button",
+                        {"pico_id": active, "type": "button", "action": action},
+                    )
+
+                    if action == "green":
+                        green_indices[active].append(idx)
+
+                    if action == "yellow":
+                        self.assertEqual(eng.state, hub_engine.STATE_SECONDARY_WAIT)
+                        trigger = eng.secondary_trigger_pico
+                        for pid in hub_engine.PICO_IDS:
+                            if pid == trigger:
+                                continue
+                            eng.handle_message(
+                                pid,
+                                "button",
+                                {"pico_id": pid, "type": "button", "action": "yellow"},
+                            )
+                        self.assertEqual(eng.state, hub_engine.STATE_ACTION)
+
+                    if action == "red" and eng.picos[active]["has_passed"]:
+                        pass_index[active] = idx
+
+                self.assertEqual(eng.state, hub_engine.STATE_STATUS)
+
+                # Regel 1: Wer gepasst hat, wird nicht erneut aktiv.
+                for pid, p_idx in pass_index.items():
+                    later = active_sequence[p_idx + 1 :]
+                    self.assertNotIn(pid, later, msg=f"{pid} war nach Pass erneut aktiv")
+
+                # Regel 2: Wer einen nicht-passenden Zug gemacht hat (grün),
+                # muss vor seinem Pass erneut aktiv werden.
+                for pid, indices in green_indices.items():
+                    if not indices:
+                        continue
+                    p_idx = pass_index.get(pid, len(active_sequence) - 1)
+                    for g_idx in indices:
+                        if g_idx >= p_idx:
+                            continue
+                        recalled = pid in active_sequence[g_idx + 1 : p_idx + 1]
+                        self.assertTrue(
+                            recalled,
+                            msg=f"{pid} wurde nach grünem Zug (Index {g_idx}) nicht erneut aufgerufen",
+                        )
 
         # --- Neue Runde: Neuer Speaker ---
         eng.handle_message("pico_2", "rfid",
