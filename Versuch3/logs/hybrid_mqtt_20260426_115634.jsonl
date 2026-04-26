@@ -1,0 +1,4 @@
+{"ts": "2026-04-26T11:56:49", "topic": "ti4/inbound", "payload": {"action": "green", "type": "button", "pico_id": "pico_1"}}
+{"ts": "2026-04-26T11:56:53", "topic": "ti4/inbound", "payload": {"action": "yellow", "type": "button", "pico_id": "pico_1"}}
+{"ts": "2026-04-26T11:56:55", "topic": "ti4/inbound", "payload": {"action": "yellow", "type": "button", "pico_id": "pico_1"}}
+{"ts": "2026-04-26T11:56:56", "topic": "ti4/inbound", "payload": {"action": "red", "type": "button", "pico_id": "pico_1"}}

@@ -1,0 +1,39 @@
+{
+  "request_id": "diag-pico_1-20260426_211013",
+  "pico_id": "pico_1",
+  "broker": "192.168.178.141:1883",
+  "received_count": 0,
+  "checks": [
+    {
+      "check": "wifi",
+      "passed": false,
+      "detail": "missing"
+    },
+    {
+      "check": "mqtt",
+      "passed": false,
+      "detail": "missing"
+    },
+    {
+      "check": "buttons_idle",
+      "passed": false,
+      "detail": "missing"
+    },
+    {
+      "check": "rfid_init",
+      "passed": false,
+      "detail": "missing"
+    },
+    {
+      "check": "led_logic",
+      "passed": false,
+      "detail": "missing"
+    },
+    {
+      "check": "summary",
+      "passed": false,
+      "detail": "missing"
+    }
+  ],
+  "all_passed": false
+}

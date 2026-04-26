@@ -12,7 +12,7 @@ import uasyncio as asyncio
 import ujson as json
 import time
 import network
-from machine import Pin, PWM, SPI
+from machine import Pin, PWM
 from umqtt.robust import MQTTClient
 from mfrc522 import MFRC522
 
@@ -70,6 +70,12 @@ LED_NAMES = ("white", "green", "yellow", "red", "blue")
 led_state = {
     "mode": "off",
     "targets": (),
+}
+
+diag_state = {
+    "pending": False,
+    "active": False,
+    "request_id": "",
 }
 
 pwms = {
@@ -137,12 +143,26 @@ def connect_wifi():
 
 def on_mqtt_message(topic, msg):
     try:
+        if isinstance(msg, bytes):
+            msg = msg.decode("utf-8")
         data = json.loads(msg)
     except Exception:
         return
 
-    led_state["mode"] = data.get("led_mode", "off")
-    led_state["targets"] = decode_color_targets(data.get("color", [0, 0, 0]))
+    if not isinstance(data, dict):
+        return
+
+    if data.get("cmd") == "diag_start":
+        req_id = data.get("request_id", "")
+        diag_state["request_id"] = str(req_id)
+        diag_state["pending"] = True
+        return
+
+    mode = data.get("led_mode", data.get("mode", "off"))
+    color = data.get("color", data.get("rgb", [0, 0, 0]))
+
+    led_state["mode"] = mode
+    led_state["targets"] = decode_color_targets(color)
 
 
 def connect_mqtt():
@@ -162,6 +182,21 @@ def connect_mqtt():
 
 def publish(client, payload):
     client.publish(TOPIC_INBOUND, json.dumps(payload))
+
+
+def publish_diag_result(client, request_id, check, passed, detail):
+    publish(
+        client,
+        {
+            "pico_id": PICO_ID,
+            "type": "diag_result",
+            "request_id": request_id,
+            "check": check,
+            "passed": bool(passed),
+            "detail": detail,
+            "ts_ms": time.ticks_ms(),
+        },
+    )
 
 
 class DebouncedButton:
@@ -191,6 +226,10 @@ async def led_task():
     pulse_dir = 1
 
     while True:
+        if diag_state["active"]:
+            await asyncio.sleep_ms(50)
+            continue
+
         mode = led_state["mode"]
         targets = led_state["targets"]
 
@@ -222,21 +261,15 @@ async def led_task():
 
 
 async def rfid_task(client):
-    spi = SPI(
-        0,
+    reader = MFRC522(
+        PIN_SPI_SCK,
+        PIN_SPI_MOSI,
+        PIN_SPI_MISO,
+        PIN_RC522_RST,
+        PIN_SPI_CS,
         baudrate=1_000_000,
-        polarity=0,
-        phase=0,
-        bits=8,
-        firstbit=SPI.MSB,
-        sck=Pin(PIN_SPI_SCK),
-        mosi=Pin(PIN_SPI_MOSI),
-        miso=Pin(PIN_SPI_MISO),
+        spi_id=0,
     )
-    rst = Pin(PIN_RC522_RST, Pin.OUT)
-    cs = Pin(PIN_SPI_CS, Pin.OUT)
-
-    reader = MFRC522(spi=spi, gpioRst=rst, gpioCs=cs)
     last_uid = None
     last_scan_ms = 0
 
@@ -288,10 +321,127 @@ async def mqtt_check_task(client):
             print("MQTT-Verbindung verloren, versuche Reconnect...")
             try:
                 client.reconnect()
+                client.subscribe(TOPIC_SELF)
+                client.subscribe(TOPIC_GLOBAL)
+                print("MQTT-Reconnect erfolgreich, Topics erneut abonniert.")
             except Exception as exc:
                 print("Reconnect fehlgeschlagen:", exc)
                 await asyncio.sleep_ms(5000)
+        except Exception as exc:
+            # Prevent silent task death if callback parsing fails once.
+            print("MQTT-Check-Fehler:", exc)
         await asyncio.sleep_ms(100)
+
+
+async def run_diagnostics(client, request_id):
+    diag_state["active"] = True
+    overall_ok = True
+    publish_diag_result(client, request_id, "diag_start", True, "diagnostics started")
+
+    wlan = network.WLAN(network.STA_IF)
+    wifi_ok = wlan.isconnected()
+    publish_diag_result(client, request_id, "wifi", wifi_ok, wlan.ifconfig() if wifi_ok else "not connected")
+    overall_ok = overall_ok and wifi_ok
+
+    mqtt_ok = True
+    publish_diag_result(
+        client,
+        request_id,
+        "mqtt",
+        mqtt_ok,
+        "connected and subscribed to self/global topics",
+    )
+
+    try:
+        idle_green = Pin(PIN_BTN_GREEN, Pin.IN, Pin.PULL_UP).value()
+        idle_yellow = Pin(PIN_BTN_YELLOW, Pin.IN, Pin.PULL_UP).value()
+        idle_red = Pin(PIN_BTN_RED, Pin.IN, Pin.PULL_UP).value()
+        buttons_ok = idle_green == 1 and idle_yellow == 1 and idle_red == 1
+        button_detail = {
+            "green": idle_green,
+            "yellow": idle_yellow,
+            "red": idle_red,
+        }
+    except Exception as exc:
+        buttons_ok = False
+        button_detail = str(exc)
+
+    publish_diag_result(client, request_id, "buttons_idle", buttons_ok, button_detail)
+    overall_ok = overall_ok and buttons_ok
+
+    try:
+        _reader = MFRC522(
+            PIN_SPI_SCK,
+            PIN_SPI_MOSI,
+            PIN_SPI_MISO,
+            PIN_RC522_RST,
+            PIN_SPI_CS,
+            baudrate=1_000_000,
+            spi_id=0,
+        )
+        rfid_ok = True
+        rfid_detail = "mfrc522 init ok"
+    except Exception as exc:
+        rfid_ok = False
+        rfid_detail = str(exc)
+
+    publish_diag_result(client, request_id, "rfid_init", rfid_ok, rfid_detail)
+    overall_ok = overall_ok and rfid_ok
+
+    try:
+        for name in LED_NAMES:
+            set_leds((name,), 65535)
+            await asyncio.sleep_ms(120)
+            set_leds((), 0)
+            await asyncio.sleep_ms(50)
+        led_ok = True
+        led_detail = "pin drive sequence executed"
+    except Exception as exc:
+        led_ok = False
+        led_detail = str(exc)
+
+    publish_diag_result(client, request_id, "led_logic", led_ok, led_detail)
+    overall_ok = overall_ok and led_ok
+
+    publish_diag_result(client, request_id, "summary", overall_ok, "diagnostics finished")
+    diag_state["active"] = False
+
+
+async def diagnostic_task(client):
+    while True:
+        if diag_state["pending"]:
+            req_id = diag_state["request_id"] or str(time.ticks_ms())
+            diag_state["pending"] = False
+            await run_diagnostics(client, req_id)
+        await asyncio.sleep_ms(100)
+
+
+async def heartbeat_task(client):
+    boot_id = str(time.ticks_ms())
+    publish(
+        client,
+        {
+            "pico_id": PICO_ID,
+            "type": "heartbeat",
+            "boot_id": boot_id,
+            "ts_ms": time.ticks_ms(),
+            "detail": "pico_started",
+        },
+    )
+    print("BOOT_REPORT sent boot_id=", boot_id)
+
+    while True:
+        await asyncio.sleep_ms(10000)
+        publish(
+            client,
+            {
+                "pico_id": PICO_ID,
+                "type": "heartbeat",
+                "boot_id": boot_id,
+                "ts_ms": time.ticks_ms(),
+            },
+        )
+        print("HEARTBEAT")
 
 
 async def main():
@@ -303,6 +453,8 @@ async def main():
     asyncio.create_task(button_task(client))
     asyncio.create_task(rfid_task(client))
     asyncio.create_task(mqtt_check_task(client))
+    asyncio.create_task(diagnostic_task(client))
+    asyncio.create_task(heartbeat_task(client))
 
     while True:
         await asyncio.sleep_ms(1000)

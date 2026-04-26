@@ -1,0 +1,2 @@
+{"ts": "2026-04-26T11:47:06", "topic": "ti4/inbound", "payload": {"uid": "E3-F9-4B-80", "type": "rfid", "pico_id": "pico_1"}}
+{"ts": "2026-04-26T11:47:09", "topic": "ti4/inbound", "payload": {"uid": "E3-F9-4B-80", "type": "rfid", "pico_id": "pico_1"}}

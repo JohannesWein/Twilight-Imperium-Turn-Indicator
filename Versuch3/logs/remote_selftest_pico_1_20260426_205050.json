@@ -1,0 +1,39 @@
+{
+  "request_id": "diag-pico_1-20260426_205045",
+  "pico_id": "pico_1",
+  "broker": "192.168.178.141:1883",
+  "received_count": 0,
+  "checks": [
+    {
+      "check": "wifi",
+      "passed": false,
+      "detail": "broker connect failed: timed out"
+    },
+    {
+      "check": "mqtt",
+      "passed": false,
+      "detail": "broker connect failed: timed out"
+    },
+    {
+      "check": "buttons_idle",
+      "passed": false,
+      "detail": "broker connect failed: timed out"
+    },
+    {
+      "check": "rfid_init",
+      "passed": false,
+      "detail": "broker connect failed: timed out"
+    },
+    {
+      "check": "led_logic",
+      "passed": false,
+      "detail": "broker connect failed: timed out"
+    },
+    {
+      "check": "summary",
+      "passed": false,
+      "detail": "broker connect failed: timed out"
+    }
+  ],
+  "all_passed": false
+}

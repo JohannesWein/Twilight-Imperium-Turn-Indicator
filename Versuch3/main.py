@@ -13,7 +13,7 @@ import uasyncio as asyncio
 import ujson as json
 import time
 import network
-from machine import Pin, SPI
+from machine import Pin
 import neopixel
 from umqtt.robust import MQTTClient
 from mfrc522 import MFRC522
@@ -194,19 +194,15 @@ async def led_task():
 # RFID-Task
 # ---------------------------------------------------------------------------
 async def rfid_task(client: MQTTClient):
-    spi = SPI(0,
-              baudrate=1_000_000,
-              polarity=0,
-              phase=0,
-              bits=8,
-              firstbit=SPI.MSB,
-              sck=Pin(PIN_SPI_SCK),
-              mosi=Pin(PIN_SPI_MOSI),
-              miso=Pin(PIN_SPI_MISO))
-    rst = Pin(PIN_RC522_RST, Pin.OUT)
-    cs  = Pin(PIN_SPI_CS,   Pin.OUT)
-
-    rdr = MFRC522(spi=spi, gpioRst=rst, gpioCs=cs)
+    rdr = MFRC522(
+        spi_id=0,
+        sck=PIN_SPI_SCK,
+        mosi=PIN_SPI_MOSI,
+        miso=PIN_SPI_MISO,
+        rst=PIN_RC522_RST,
+        cs=PIN_SPI_CS,
+        baudrate=1_000_000,
+    )
     last_uid = None
     last_scan_ms = 0
 
