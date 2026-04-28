@@ -9,12 +9,12 @@ try:
     from config import MQTT_HOST, MQTT_PORT, PICO_ID, WIFI_SSID, WIFI_PASS
 except Exception as e:
     PICO_ID = "pico_1_boot_diag"
-    MQTT_HOST = "192.168.178.141"
+    MQTT_HOST = "10.42.0.1"
     MQTT_PORT = 1883
 
 wlan = network.WLAN(network.STA_IF)
 wlan.active(True)
-wlan.connect(WIFI_SSID if 'WIFI_SSID' in dir() else "LordVoldemodem", WIFI_PASS if 'WIFI_PASS' in dir() else "7Zwergesindlieb")
+wlan.connect(WIFI_SSID if 'WIFI_SSID' in dir() else "TI4-HGM-AP", WIFI_PASS if 'WIFI_PASS' in dir() else "TI4HGM2026")
 for _ in range(20):
     if wlan.isconnected():
         break

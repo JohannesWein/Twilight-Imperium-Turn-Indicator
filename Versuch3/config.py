@@ -5,11 +5,11 @@
 PICO_ID = "pico_1"
 
 # WiFi settings
-WIFI_SSID = "LordVoldemodem"
-WIFI_PASS = "7Zwergesindlieb"
+WIFI_SSID = "TI4-HGM-AP"
+WIFI_PASS = "TI4HGM2026"
 
 # MQTT settings
-MQTT_HOST = "192.168.178.141"  # Raspberry Pi Hub IP on the local WiFi network
+MQTT_HOST = "10.42.0.1"  # Raspberry Pi AP/Broker IP on the isolated TI4 network
 MQTT_PORT = 1883
 
 # Client mode hints

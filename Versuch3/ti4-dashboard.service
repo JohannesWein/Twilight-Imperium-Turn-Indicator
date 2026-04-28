@@ -1,0 +1,16 @@
+[Unit]
+Description=TI4 HGM Dashboard
+After=network-online.target mosquitto.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=uuuren
+WorkingDirectory=/home/uuuren/ti4-hgm-live/Versuch3
+ExecStart=/usr/bin/python3 /home/uuuren/ti4-hgm-live/Versuch3/dashboard_pi.py --host 0.0.0.0 --port 8080 --broker-host 127.0.0.1 --broker-port 1883
+Restart=always
+RestartSec=2
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target
