@@ -7,9 +7,8 @@ koennen, ohne dass sie etwas installieren muessen (nur ein Browser-Link).
 Nutzt dieselbe Backend-Abstraktion wie pico_gui_simulator.py
 (pico_backend.EmbeddedBackend / MqttBackend) - die Spiellogik ist also
 identisch, nur die Oberflaeche ist eine Webseite statt eines Tkinter-
-Fensters. Bewusst ohne Web-Framework gebaut (nur Python-Stdlib
-http.server), analog zu dashboard_pi.py, um keine neuen Abhaengigkeiten
-zu brauchen.
+Fensters. Bewusst ohne Web-Framework gebaut (Python-Stdlib http.server);
+die Abhaengigkeit qrcode wird nur fuer lokale SVG-QR-Codes genutzt.
 
 Start (nur lokal, Standard - sicherste Variante):
 
@@ -42,16 +41,22 @@ keine Enterprise-Loesung):
 from __future__ import annotations
 
 import argparse
+import base64
+import io
 import json
 import os
 import secrets
 import sys
 import threading
 import time
+import webbrowser
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Optional
 from urllib.parse import parse_qs, urlparse
+
+import qrcode
+from qrcode.image.svg import SvgPathImage
 
 sys.path.insert(0, os.path.dirname(__file__))
 
@@ -284,6 +289,33 @@ class SimHandler(BaseHTTPRequestHandler):
             self._send_json(self.hub.snapshot(scope))
             return
 
+        if parsed.path == "/api/links":
+            scope = self.hub.resolve_token(self._token_from_query(query))
+            if scope is None:
+                self._send_json({"error": "invalid_token"}, HTTPStatus.UNAUTHORIZED)
+                return
+            if not scope.is_admin:
+                self._send_json({"error": "forbidden"}, HTTPStatus.FORBIDDEN)
+                return
+
+            base_url = f"http://{self.headers.get('Host', 'localhost')}/"
+            links = []
+            for pico_id, pico_token in self.hub.pico_tokens.items():
+                url = f"{base_url}?token={pico_token}"
+                qr = qrcode.QRCode(box_size=4, border=2)
+                qr.add_data(url)
+                qr.make(fit=True)
+                image = qr.make_image(image_factory=SvgPathImage)
+                buffer = io.BytesIO()
+                image.save(buffer)
+                links.append({
+                    "pico_id": pico_id,
+                    "url": url,
+                    "qr_svg": base64.b64encode(buffer.getvalue()).decode("ascii"),
+                })
+            self._send_json({"links": links})
+            return
+
         self.send_error(HTTPStatus.NOT_FOUND, "Not Found")
 
     def do_POST(self):
@@ -377,6 +409,13 @@ INDEX_HTML = """<!doctype html>
   select, input[type=text] { padding: 4px; border-radius: 6px; border: 1px solid var(--line); }
   .admin-bar { padding: 8px 18px; display: flex; gap: 8px; border-bottom: 1px solid var(--line); background: rgba(255,250,242,.7); }
   .admin-bar button { padding: 6px 12px; border-radius: 6px; border: 1px solid var(--line); background: #fff; cursor: pointer; }
+    .admin-links { padding: 10px 18px 14px; border-bottom: 1px solid var(--line); }
+    .admin-links h2 { margin: 0 0 8px; font-size: 16px; }
+    .player-link-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 8px; }
+    .player-link { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px; border: 1px solid var(--line); border-radius: 6px; background: #fff; }
+    .player-link a { overflow-wrap: anywhere; color: var(--accent); }
+    .player-link img { width: 88px; height: 88px; flex: none; }
+    .instructions { margin: 0; padding: 10px 18px; border-bottom: 1px solid var(--line); background: #e8f3f1; color: var(--ink); }
   [disabled] { opacity: .4; cursor: not-allowed; }
   #error { display:none; padding: 20px; font-size: 16px; }
 </style>
@@ -388,10 +427,15 @@ INDEX_HTML = """<!doctype html>
     <h1>TI4-HGM Web-Simulator</h1>
     <div class="muted" id="meta">lade...</div>
   </header>
+    <p class="instructions" id="instructions" aria-live="polite"></p>
   <div class="admin-bar" id="adminBar" style="display:none">
     <button onclick="doAdmin('new_game')">New Game</button>
     <button onclick="doAdmin('undo')">TAG_UNDO (admin)</button>
   </div>
+    <section class="admin-links" id="adminLinks" style="display:none">
+        <h2>Spielerlinks</h2>
+        <div class="player-link-list" id="playerLinkList"></div>
+    </section>
   <main id="picos"></main>
 </div>
 <script>
@@ -399,6 +443,7 @@ const params = new URLSearchParams(location.search);
 const token = params.get('token') || '';
 const RFID_CHOICES = __RFID_CHOICES_JSON__;
 let you = null;
+let playerLinksLoaded = false;
 // Wird bei jedem Poll (alle 700ms) neu gerendert (innerHTML) - ohne dieses
 // Merken wuerde eine Dropdown-Auswahl vor dem Klick auf "Scan" verloren gehen.
 const selectedRfid = {};
@@ -422,6 +467,9 @@ function render(s) {
   document.getElementById('meta').textContent =
     `Modus: ${s.mode} | State: ${s.state} | Aktiv: ${s.active_pico_id ?? '-'} | Runde: ${s.round_counter} | ${roleTxt}`;
   document.getElementById('adminBar').style.display = you.scope === 'admin' ? 'flex' : 'none';
+    document.getElementById('adminLinks').style.display = you.scope === 'admin' ? 'block' : 'none';
+    document.getElementById('instructions').textContent = instructionFor(s);
+    if (you.scope === 'admin' && !playerLinksLoaded) loadPlayerLinks();
 
   const picos = document.getElementById('picos');
   picos.innerHTML = Object.entries(s.picos).map(([pid, p]) => {
@@ -449,6 +497,54 @@ function render(s) {
       </div>
     </div>`;
   }).join('');
+}
+
+async function loadPlayerLinks() {
+    playerLinksLoaded = true;
+    const list = document.getElementById('playerLinkList');
+    try {
+        const data = await api('/api/links');
+        if (!data.links.length) {
+            list.textContent = 'Keine separaten Pico-Links konfiguriert.';
+            return;
+        }
+        list.replaceChildren(...data.links.map(({pico_id, url, qr_svg}) => {
+            const item = document.createElement('div');
+            item.className = 'player-link';
+            const anchor = document.createElement('a');
+            anchor.href = url;
+            anchor.target = '_blank';
+            anchor.rel = 'noopener';
+            anchor.textContent = `${pico_id} oeffnen`;
+            const qr = document.createElement('img');
+            qr.alt = `QR-Code fuer ${pico_id}`;
+            qr.src = `data:image/svg+xml;base64,${qr_svg}`;
+            item.append(anchor, qr);
+            return item;
+        }));
+    } catch (e) {
+        playerLinksLoaded = false;
+        list.textContent = 'Spielerlinks konnten nicht geladen werden.';
+    }
+}
+
+function instructionFor(s) {
+    if (s.state === 'STATE_SETUP') {
+        return 'Setup: Markiere Naalu-Spieler bei Bedarf mit TAG_NAALU. Danach scannt der Speaker TAG_SPEAKER; dann beginnt die Initiativwahl.';
+    }
+    if (s.state === 'STATE_STRATEGY') {
+        return `${s.active_pico_id} ist dran: gewaehle die Strategiekarte mit STRAT_1 bis STRAT_8 und scanne den passenden Tag.`;
+    }
+    if (s.state === 'STATE_ACTION') {
+        return `${s.active_pico_id} ist am Zug: Gelb spielt die Strategiekarte, Gruen beendet den Zug, Rot passt (erst nach Gelb).`;
+    }
+    if (s.state === 'STATE_SECONDARY_WAIT') {
+        return 'Sekundaeraktion: Alle Spieler ausser dem Ausloeser erledigen die Sekundaeraktion und bestaetigen mit Gelb. Danach geht es beim Ausloeser weiter.';
+    }
+    if (s.state === 'STATE_STATUS') {
+        return 'Runde abgeschlossen. Der neue Speaker startet die naechste Runde, indem er TAG_SPEAKER scannt.';
+    }
+    return 'Folge dem angezeigten Spielstatus.';
 }
 
 async function refresh() {
@@ -548,6 +644,19 @@ def run_selftest() -> int:
         print(f"SELFTEST_FAIL invalid token accepted (status={status})")
         ok = False
 
+    status, body = call("/api/links", admin_token)
+    if status != 200 or len(body.get("links", [])) != len(PICO_IDS):
+        print(f"SELFTEST_FAIL admin could not load player links (status={status})")
+        ok = False
+    elif any(not link.get("url") or not link.get("qr_svg") for link in body["links"]):
+        print("SELFTEST_FAIL player link missing URL or QR code")
+        ok = False
+
+    status, _ = call("/api/links", pico_tokens["pico_1"])
+    if status != 403:
+        print(f"SELFTEST_FAIL pico token accessed admin links (status={status})")
+        ok = False
+
     status, body = call(
         "/api/action", pico_tokens["pico_2"], "POST",
         {"kind": "button", "pico_id": "pico_1", "value": "green"},
@@ -599,6 +708,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--port", type=int, default=8090)
     parser.add_argument("--broker", help="host:port eines laufenden Hubs fuer MQTT-Integrationstest")
     parser.add_argument("--admin-token", help="Festes Admin-Token statt eines zufaellig generierten")
+    parser.add_argument("--open-browser", action="store_true", help="Admin-Ansicht beim Start im Browser oeffnen")
+    parser.add_argument("--browser-host", help="Host/IP fuer den automatisch geoeffneten Admin-Link")
     parser.add_argument(
         "--single-token", action="store_true",
         help="Keine separaten Pico-Tokens erzeugen, nur ein gemeinsames Admin-Token",
@@ -611,6 +722,8 @@ def main() -> int:
     args = parse_args()
     if args.selftest:
         return run_selftest()
+    if args.open_browser and args.host == "0.0.0.0" and not args.browser_host:
+        raise SystemExit("--browser-host ist bei --host 0.0.0.0 erforderlich")
 
     admin_token, pico_tokens = _generate_tokens(args.single_token)
     if args.admin_token:
@@ -622,6 +735,13 @@ def main() -> int:
 
     _print_links(args.host, args.port, admin_token, pico_tokens)
     print(f"[HTTP] http://{args.host}:{args.port}")
+    if args.open_browser:
+        browser_host = args.browser_host or args.host
+        browser_url = f"http://{browser_host}:{args.port}/?token={admin_token}"
+        timer = threading.Timer(0.5, webbrowser.open, args=(browser_url,))
+        timer.daemon = True
+        timer.start()
+        print(f"[Browser] Oeffne {browser_url}")
 
     try:
         server.serve_forever()
