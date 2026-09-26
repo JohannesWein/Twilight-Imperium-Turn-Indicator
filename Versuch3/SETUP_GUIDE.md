@@ -82,7 +82,7 @@ Before the system can work end-to-end, you need to run the Hub on a Raspberry Pi
    sudo apt install python3-pip python3-venv
    python3 -m venv venv
    source venv/bin/activate
-   pip install paho-mqtt
+   pip install paho-mqtt qrcode
    ```
 
 3. **Run Hub Engine**:
